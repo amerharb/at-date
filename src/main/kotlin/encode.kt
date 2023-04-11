@@ -19,7 +19,7 @@ fun encode(input: String): AtDate {
         else -> throw Exception("Invalid date level")
     }
 
-    val rValue = propArr.find { it.startsWith("r:") }?.substringAfter(":")
+    val rValue = propArr.find { it.startsWith("t:") }?.substringAfter(":")
     val r = rValue?.toUInt() ?: 0U
     val resolutionLevel = when (r) {
             0U -> ResolutionLevel.Level0
@@ -73,7 +73,6 @@ fun encode(input: String): AtDate {
     val dateULong = when (rangeLevel) {
         RangeLevel.Level0 -> TODO()
         RangeLevel.Level1 -> {
-            // calc the Julian Day Number of date
             // only most right 15 bits are used
             jdn.toULong() and 0b01111111_11111111UL
         }
@@ -128,12 +127,12 @@ fun encode(input: String): AtDate {
     val (zoneLevel, zoneULong) = when {
         datetime.endsWith("Z") -> Pair(ZoneLevel.Level0, 0UL)
         datetime.contains("+") -> {
-            val offset = datetime.substringAfterLast("+").split(":")
+            val offset = datetime.substringAfterLast("+").substringBeforeLast("@").split(":")
             val z = offset[0].toByte() * 4 + offset[1].toByte() / 15
             Pair(ZoneLevel.Level1, (z and 0b00111111).toULong())
         }
         datetime.contains("-") -> {
-            val offset = datetime.substringAfterLast("-").split(":")
+            val offset = datetime.substringAfterLast("-").substringBeforeLast("@").split(":")
             val z = offset[0].toByte() * 4 + offset[1].toByte() / 15
             val z6bits = z and 0b00111111
             Pair(ZoneLevel.Level1, (z6bits or 0b01000000).toULong())
@@ -158,5 +157,5 @@ fun getJDN(year: Int, month: Int, day: Int): Int {
     val a = (14 - month) / 12
     val y = year + 4800 - a
     val m = month + 12 * a - 3
-    return day + (153 * m + 2) / 5 + 365 * y + y / 4 - y / 100 + y / 400 - 32045
+    return day + (153 * m + 2) / 5 + 365 * y + y / 4 - y / 100 + y / 400 - 32046
 }
