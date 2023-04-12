@@ -1,3 +1,5 @@
+package com.amerharb.atdate
+
 data class AtDate(
     val rangeLevel: RangeLevel = RangeLevel.Level1,
     val resolutionLevel: ResolutionLevel = ResolutionLevel.Level0,
