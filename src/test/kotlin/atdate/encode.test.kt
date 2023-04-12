@@ -5,6 +5,27 @@ import kotlin.test.Test
 // test encode function
 class TestEncode {
     @Test
+    fun example1() {
+        val input = "@2019-05-05 {d:1}@"
+        val actual = encode(input)
+        val expected = AtDate(
+            rangeLevel = RangeLevel.Level1,
+            resolutionLevel = ResolutionLevel.Level0,
+            zoneLevel = ZoneLevel.Level0,
+            accuracy = Accuracy.Start,
+            leapSecondsFlag = 0U,
+            date = 0B11_11110001U,
+            time = null,
+            zone = null,
+            plusLeapSeconds = null,
+            minusLeapSeconds = null,
+        )
+        println(actual)
+        println(expected)
+        assert(actual == expected)
+    }
+
+    @Test
     fun example2() {
         val input = "@2019-05-05T19:53:00+02:00 {d:1, t:5, a:s, l:0-0, z:1}@"
         val actual = encode(input)
