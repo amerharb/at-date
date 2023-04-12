@@ -1,8 +1,5 @@
 package com.amerharb.atdate
 
-import java.text.SimpleDateFormat
-import java.util.*
-
 fun encode(input: String): AtDate {
     // takes input like "@2019-01-01T00:00:00Z {d:1, r:0, a:s, l:0-0}@"
     // and returns an AtDate object
@@ -94,14 +91,7 @@ fun encode(input: String): AtDate {
         else -> throw Exception("Invalid date level")
     }
 
-    val formatter = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-    formatter.timeZone = TimeZone.getTimeZone("UTC")
-    val date = formatter.parse(datePart)
-    val calendar = Calendar.getInstance()
-    calendar.time = date
-    val year = calendar.get(Calendar.YEAR)
-    val month = calendar.get(Calendar.MONTH) + 1
-    val day = calendar.get(Calendar.DAY_OF_MONTH)
+    val (year, month, day) = datePart.split("-").map { it.toInt() }
     val jdn = getJDN(year, month, day)
     val dateULong = when (rangeLevel) {
         RangeLevel.Level0 -> TODO()
