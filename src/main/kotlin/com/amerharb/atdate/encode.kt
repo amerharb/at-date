@@ -6,7 +6,9 @@ import java.util.*
 fun encode(input: String): AtDate {
     // takes input like "@2019-01-01T00:00:00Z {d:1, r:0, a:s, l:0-0}@"
     // and returns an AtDate object
-    val datetime = input.substringAfter("@").substringBefore(" ")
+    val datetime = input.substringAfter("@").substringBefore(" ") // TODO: change this to regex that take "{"
+    val datePart = datetime.substringBefore("T")
+    val timezonePart = datetime.substringAfter("T")
     val prop = input.substringAfter("{").substringBefore("}")
     val propArr = prop.trim().split(",").map { it.trim() }
 
@@ -61,11 +63,39 @@ fun encode(input: String): AtDate {
     val lList = lValue?.split("-")?.map { it.toULong() } ?: listOf(0UL, 0UL)
     val pl = lList[0]
     val ml = lList[1]
+    val leapSecondsFlag:UByte = when {
+        (pl == 0UL && ml == 0UL) -> 0U
+        (pl < 0xFFUL && ml < 0xFFUL) -> 1U
+        (pl < 0xFFFFUL && ml < 0xFFFFUL) -> 2U
+        (pl < 0xFF_FFFFUL && ml < 0xFF_FFFFUL) -> 3U
+        (pl < 0xFFFF_FFFFUL && ml < 0xFFFF_FFFFUL) -> 4U
+        (pl < 0xFF_FFFF_FFFFUL && ml < 0xFF_FFFF_FFFFUL) -> 5U
+        (pl < 0xFFFF_FFFF_FFFFUL && ml < 0xFFFF_FFFF_FFFFUL) -> 6U
+        (pl < 0xFF_FFFF_FFFF_FFFFUL && ml < 0xFF_FFFF_FFFF_FFFFUL) -> 7U
+        (pl < 0xFFFF_FFFF_FFFF_FFFFUL && ml < 0xFFFF_FFFF_FFFF_FFFFUL) -> 8U
+        else -> throw Exception("leap second over 8 bytes is not supported")
+    }
 
-    val dateString = datetime.substringBefore("T")
+    val zValue = propArr.find { it.startsWith("z:") }?.substringAfter(":")
+    val providedZoneLevel = when (zValue?.toUInt()) {
+        null -> null
+        0U -> ZoneLevel.Level0
+        1U -> ZoneLevel.Level1
+        2U -> ZoneLevel.Level2
+        3U -> ZoneLevel.Level3
+        4U -> ZoneLevel.Level4
+        5U -> ZoneLevel.Level5
+        6U -> ZoneLevel.Level6
+        7U -> ZoneLevel.Level7
+        8U -> ZoneLevel.Level8
+        9U -> ZoneLevel.Level9
+        10U -> ZoneLevel.Level10
+        else -> throw Exception("Invalid date level")
+    }
+
     val formatter = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
     formatter.timeZone = TimeZone.getTimeZone("UTC")
-    val date = formatter.parse(dateString)
+    val date = formatter.parse(datePart)
     val calendar = Calendar.getInstance()
     calendar.time = date
     val year = calendar.get(Calendar.YEAR)
@@ -84,13 +114,14 @@ fun encode(input: String): AtDate {
     }
 
     // read time iso format after T and before Z, + or -
-    val timeString = when {
-        datetime.endsWith("Z") -> datetime.substringAfter("T").substringBeforeLast("Z")
-        datetime.contains("+") -> datetime.substringAfter("T").substringBeforeLast("+")
-        datetime.contains("-") -> datetime.substringAfter("T").substringBeforeLast("-")
-        else -> datetime.substringAfter("T")
+    val timePart = when {
+        timezonePart.endsWith("Z") -> timezonePart.substringAfter("T").substringBeforeLast("Z")
+        timezonePart.contains("+") -> timezonePart.substringAfter("T").substringBeforeLast("+")
+        timezonePart.contains("-") -> timezonePart.substringAfter("T").substringBeforeLast("-")
+        timezonePart.contains("@") -> timezonePart.substringAfter("T").substringBeforeLast("@").trim()
+        else -> timezonePart.substringAfter("T").trim()
     }
-    val timeArray = timeString.split(":")
+    val timeArray = timePart.split(":")
     val hour = timeArray[0].toULong()
     val minute = timeArray[1].toULong()
     val second = timeArray[2].toDouble()
@@ -127,19 +158,19 @@ fun encode(input: String): AtDate {
     // read offset part of iso format
 
     val (zoneLevel, zoneULong) = when {
-        datetime.endsWith("Z") -> Pair(ZoneLevel.Level0, 0UL)
-        datetime.contains("+") -> {
-            val offset = datetime.substringAfterLast("+").substringBeforeLast("@").split(":")
+        timezonePart.endsWith("Z") -> Pair(providedZoneLevel?:ZoneLevel.Level1, 0UL)
+        timezonePart.contains("+") -> {
+            val offset = timezonePart.substringAfterLast("+").substringBeforeLast("@").split(":")
             val z = offset[0].toByte() * 4 + offset[1].toByte() / 15
-            Pair(ZoneLevel.Level1, (z and 0b00111111).toULong())
+            Pair(providedZoneLevel?:ZoneLevel.Level1, (z and 0b00111111).toULong())
         }
-        datetime.contains("-") -> {
-            val offset = datetime.substringAfterLast("-").substringBeforeLast("@").split(":")
+        timezonePart.contains("-") -> {
+            val offset = timezonePart.substringAfterLast("-").substringBeforeLast("@").split(":")
             val z = offset[0].toByte() * 4 + offset[1].toByte() / 15
             val z6bits = z and 0b00111111
-            Pair(ZoneLevel.Level1, (z6bits or 0b01000000).toULong())
+            Pair(providedZoneLevel?:ZoneLevel.Level1, (z6bits or 0b01000000).toULong())
         }
-        else -> Pair(ZoneLevel.Level0, 0UL)
+        else -> Pair(providedZoneLevel?:ZoneLevel.Level0, null)
     }
 
     return AtDate(
@@ -147,11 +178,12 @@ fun encode(input: String): AtDate {
         resolutionLevel = resolutionLevel,
         zoneLevel = zoneLevel,
         accuracy = accuracy,
+        leapSecondsFlag = leapSecondsFlag,
         date = dateULong,
         time = timeULong,
         zone = zoneULong,
-        plusLeapSeconds = pl,
-        minusLeapSeconds = ml,
+        plusLeapSeconds = if (leapSecondsFlag == 0.toUByte()) null else pl,
+        minusLeapSeconds = if (leapSecondsFlag == 0.toUByte()) null else ml,
     )
 }
 

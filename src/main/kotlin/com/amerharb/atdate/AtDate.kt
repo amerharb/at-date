@@ -5,12 +5,12 @@ data class AtDate(
     val resolutionLevel: ResolutionLevel = ResolutionLevel.Level0,
     val zoneLevel: ZoneLevel = ZoneLevel.Level0,
     val accuracy: Accuracy = Accuracy.Start,
-
+    val leapSecondsFlag: UByte = 0U,
     val date: ULong = 0U,
-    val time: ULong = 0U,
-    val zone: ULong = 0U,
-    val plusLeapSeconds: ULong = 0U,
-    val minusLeapSeconds: ULong = 0U,
+    val time: ULong? = null,
+    val zone: ULong? = null,
+    val plusLeapSeconds: ULong? = null,
+    val minusLeapSeconds: ULong? = null,
 )
 
 enum class Accuracy {
