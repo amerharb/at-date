@@ -95,7 +95,7 @@ class TestGetJDN {
         val input = "2019-05-05"
         val (year, month, day) = input.split("-").map { it.toInt() }
         val actual = getJDN(year, month, day)
-        val expected = 0B00100101_10000011_11110001 // 2458609
+        val expected = 0B00100101_10000011_11110001UL // 2458609
         println(actual)
         println(expected)
         assert(actual == expected)
@@ -104,7 +104,7 @@ class TestGetJDN {
     @Test
     fun testDay0() {
         val actual = getJDN(-4713, 11, 24) // year: 4714BC month: 11 day: 24
-        val expected = 0
+        val expected = 0UL
         println(actual)
         println(expected)
         assert(actual == expected)

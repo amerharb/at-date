@@ -21,9 +21,9 @@ fun encode(input: String): AtDate {
         else -> throw Exception("Invalid date level")
     }
 
-    val rValue = propArr.find { it.startsWith("t:") }?.substringAfter(":")
-    val r = rValue?.toUInt() ?: 0U
-    val resolutionLevel = when (r) {
+    val tValue = propArr.find { it.startsWith("t:") }?.substringAfter(":")
+    val t = tValue?.toUInt() ?: 0U
+    val resolutionLevel = when (t) {
         0U -> ResolutionLevel.Level0
         1U -> ResolutionLevel.Level1
         2U -> ResolutionLevel.Level2
@@ -94,13 +94,13 @@ fun encode(input: String): AtDate {
     val (year, month, day) = datePart.split("-").map { it.toInt() }
     val jdn = getJDN(year, month, day)
     val dateULong = when (rangeLevel) {
-        RangeLevel.Level0 -> TODO()
+        RangeLevel.Level0 -> TODO() // range level 0 only allowed with tp
         RangeLevel.Level1 -> {
             // only most right 15 bits are used
-            jdn.toULong() and 0b01111111_11111111UL
+            jdn and 0b01111111_11111111UL
         }
 
-        RangeLevel.Level2 -> TODO()
+        RangeLevel.Level2 -> jdn
         RangeLevel.Level3 -> TODO()
         RangeLevel.Level4 -> TODO()
     }
@@ -113,7 +113,7 @@ fun encode(input: String): AtDate {
         timezonePart.contains("@") -> timezonePart.substringBeforeLast("@").trim()
         else -> timezonePart.substringAfter("T").trim()
     }
-    val timeULong = if ( timePart.trim() != "") {
+    val timeULong = if (timePart.trim() != "") {
         val timeArray = timePart.split(":")
         val hour = timeArray[0].toULong()
         val minute = timeArray[1].toULong()
@@ -186,9 +186,9 @@ fun encode(input: String): AtDate {
     )
 }
 
-fun getJDN(year: Int, month: Int, day: Int): Int {
+fun getJDN(year: Int, month: Int, day: Int): ULong {
     val p1 = (1461 * (year + 4800 + (month - 14) / 12)) / 4
     val p2 = (367 * (month - 2 - 12 * ((month - 14) / 12))) / 12
     val p3 = -(3 * ((year + 4900 + (month - 14) / 12) / 100)) / 4 + day - 32075
-    return (p1 + p2 + p3)
+    return (p1 + p2 + p3).toULong()
 }
