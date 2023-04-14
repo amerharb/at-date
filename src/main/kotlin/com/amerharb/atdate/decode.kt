@@ -68,7 +68,7 @@ fun decode(input: Array<UByte>): AtDate {
     pointer += timeLength
 
 
-    val zoneLength = getResolutionBitCount(atDateHeader.resolutionLevel)
+    val zoneLength = getZoneBitCount(atDateHeader.zoneLevel)
     val zone = getLongValueFromBytes(bodyArray, pointer, zoneLength)
     pointer += zoneLength
 
@@ -104,7 +104,7 @@ fun getLongValueFromBytes(bytes: Array<UByte>, startBit: Int, length: Int): ULon
     for (i in startBit..endBit) {
         val byteIndex = i / 8
         val bitIndex = i % 8
-        val bitMask = 1 shl bitIndex
+        val bitMask = 0b1000_0000 shr bitIndex
         if (bytes[byteIndex].toInt() and bitMask != 0) {
             value = value or (1UL shl (endBit - i))
         }
