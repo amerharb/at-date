@@ -46,4 +46,25 @@ class TestAtDate {
         println(actual.joinToString { it.toString(16) })
         assert(expected.contentEquals(actual))
     }
+
+    @Test
+    @OptIn(ExperimentalUnsignedTypes::class)
+    fun testGetNotationExample1() {
+        val example1 = AtDate(
+            rangeLevel = RangeLevel.Level1,
+            resolutionLevel = ResolutionLevel.Level0,
+            zoneLevel = ZoneLevel.Level0,
+            accuracy = Accuracy.Start,
+            date = 0b11_11110001U,
+            time = null,
+            zone = null,
+            plusLeapSeconds = null,
+            minusLeapSeconds = null,
+        )
+        val expected = "@2019-05-05 { d:1 t:0 z:0 a:s l:0-0 }@"
+        val actual = example1.getNotation()
+        println(expected)
+        println(actual)
+        assert(expected == actual)
+    }
 }

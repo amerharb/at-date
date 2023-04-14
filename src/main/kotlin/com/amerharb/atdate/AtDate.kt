@@ -20,6 +20,34 @@ data class AtDate(
         return payload.toTypedArray()
     }
 
+    fun getNotation(): String {
+        val notation = StringBuilder()
+        notation.append("@")
+        val isoDate = getDateFromJdn(getJdn())
+        notation.append("${isoDate.year}-${withLeadingZero(isoDate.month)}-${withLeadingZero(isoDate.day)}")
+        if (time != null) {
+            notation.append("T")
+            val isoTime = getTimeFromTimeLong(resolutionLevel, time)
+            notation.append("${isoTime.hour}:${isoTime.minute}:${isoTime.second}")
+        }
+        if (zone != null) {
+            //TODO: later to support zone
+//            notation.append(getZone())
+        }
+        notation.append(" {")
+        notation.append(" d:${rangeLevel.no}")
+        notation.append(" t:${resolutionLevel.no}")
+        notation.append(" z:${zoneLevel.no}")
+        notation.append(" a:${accuracy.letter}")
+        notation.append(" l:${plusLeapSeconds ?: 0}-${minusLeapSeconds ?: 0}")
+        notation.append(" }@")
+        return notation.toString()
+    }
+
+    private fun withLeadingZero(number: Long): String {
+        return if (number < 10) "0$number" else "$number"
+    }
+
     private fun getHeader(): Array<UByte> {
         // TODO: later to support header with more than 1 byte
         /** header design IKDTTTZA */
@@ -104,7 +132,7 @@ data class AtDate(
 
         // TODO: support body longer than 8 bytes
         val bodyList = mutableListOf<UByte>()
-        for (i in (64 - 8) downTo   (64 - (getHeadBitCount() + getBodyBitCount())) step 8) {
+        for (i in (64 - 8) downTo (64 - (getHeadBitCount() + getBodyBitCount())) step 8) {
             bodyList.add((body shr i).toUByte())
         }
         return bodyList.toTypedArray()
@@ -126,6 +154,23 @@ data class AtDate(
     private fun getZoneBitCount(): Int = getZoneBitCount(this.zoneLevel)
 
     private fun getLeapSecondsBitCount(): Int = getLeapSecondsBitCount(this.leapSecondsFlag)
+
+    private fun getJdn(): Long {
+        when (rangeLevel) {
+            RangeLevel.Level0 -> throw Exception("Level 0 is not supported in Date")
+            RangeLevel.Level1 -> {
+                return date.toLong() or 0b00100101_10000000_00000000L
+            }
+
+            RangeLevel.Level2 -> {
+                return date.toLong()
+            }
+
+            RangeLevel.Level3 -> TODO()
+            RangeLevel.Level4 -> TODO()
+        }
+
+    }
 }
 
 data class AtDateHeader(
@@ -136,13 +181,13 @@ data class AtDateHeader(
     val leapSecondsFlag: UByte,
 )
 
-enum class Accuracy {
-    Start,
-    Whole,
-    End,
+enum class Accuracy(val letter: Char) {
+    Start('s'),
+    Whole('w'),
+    End('e'),
 }
 
-enum class RangeLevel(val level: UByte) {
+enum class RangeLevel(val no: UByte) {
     Level0(0U),
     Level1(1U),
     Level2(2U),
@@ -150,7 +195,7 @@ enum class RangeLevel(val level: UByte) {
     Level4(4U),
 }
 
-enum class ResolutionLevel(val level: UByte) {
+enum class ResolutionLevel(val no: UByte) {
     Level0(0U),
     Level1(1U),
     Level2(2U),
@@ -174,7 +219,7 @@ enum class ResolutionLevel(val level: UByte) {
     Level20(20U),
 }
 
-enum class ZoneLevel(val level: UByte) {
+enum class ZoneLevel(val no: UByte) {
     Level0(0U),
     Level1(1U),
     Level2(2U),

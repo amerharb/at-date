@@ -130,3 +130,67 @@ fun getDateFromJdn(jdn: Long): BasicISODate {
     val year = 100 * b + d - 4800 + (m / 10)
     return BasicISODate(year, month, day)
 }
+
+data class BasicISOTime(
+    val hour: Long,
+    val minute: Long,
+    val second: Double,
+)
+
+fun getTimeFromTimeLong(timeLevel: ResolutionLevel, time: ULong): BasicISOTime {
+    return when (timeLevel) {
+        ResolutionLevel.Level0 -> BasicISOTime(0L, 0L, 0.0)
+        ResolutionLevel.Level1 -> BasicISOTime(time.toLong(), 0L, 0.0)
+        ResolutionLevel.Level2 -> {
+            val hour = time / 4UL
+            val minute = time.mod(4UL)
+            BasicISOTime(hour.toLong(), minute.toLong(), 0.0)
+        }
+
+        ResolutionLevel.Level3 -> {
+            val hour = time / 12UL
+            val minute = time.mod(12UL)
+            return BasicISOTime(hour.toLong(), minute.toLong(), 0.0)
+        }
+
+        ResolutionLevel.Level4 -> {
+            val hour = time / 60UL
+            val minute = time.mod(60UL)
+            return BasicISOTime(hour.toLong(), minute.toLong(), 0.0)
+        }
+
+        ResolutionLevel.Level5 -> {
+            val secInHour = (60 * 60).toULong()
+            val hour = time / secInHour
+            val minute = time.mod(secInHour) / 60UL
+            val second = time.mod(secInHour).mod(60UL).toDouble()
+            return BasicISOTime(hour.toLong(), minute.toLong(), second)
+        }
+
+        ResolutionLevel.Level6 -> {
+            val milisecInHour = (60 * 60 * 1000).toULong()
+            val hour = time / milisecInHour
+            val minute = time.mod(milisecInHour) / (60 * 1000).toULong()
+            val second = time.mod(milisecInHour).mod((60 * 1000).toULong()).toDouble() / 1000.0
+            return BasicISOTime(hour.toLong(), minute.toLong(), second)
+        }
+
+        ResolutionLevel.Level7 -> {
+            val microsecInHour = 60UL * 60UL * 1000UL * 1000UL
+            val hour = time / microsecInHour
+            val minute = time.mod(microsecInHour) / (60UL * 1000UL * 1000UL)
+            val second = time.mod(microsecInHour).mod(60UL * 1000UL * 1000UL).toDouble() / 1_000_000.0
+            return BasicISOTime(hour.toLong(), minute.toLong(), second)
+        }
+
+        ResolutionLevel.Level8 -> {
+            val nanosecInHour = 60UL * 60UL * 1000UL * 1000UL * 1000UL
+            val hour = time / nanosecInHour
+            val minute = time.mod(nanosecInHour) / (60UL * 1000UL * 1000UL * 1000UL)
+            val second = time.mod(nanosecInHour).mod((60UL * 1000UL * 1000UL * 1000UL)).toDouble() / 1_000_000_000.0
+            return BasicISOTime(hour.toLong(), minute.toLong(), second)
+        }
+
+        else -> TODO() // support for other levels
+    }
+}
