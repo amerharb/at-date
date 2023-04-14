@@ -14,7 +14,7 @@ class TestEncode {
             zoneLevel = ZoneLevel.Level0,
             accuracy = Accuracy.Start,
             leapSecondsFlag = 0U,
-            date = 0B11_11110001U,
+            date = 0b11_11110001U,
             time = null,
             zone = null,
             plusLeapSeconds = null,
@@ -34,9 +34,9 @@ class TestEncode {
             resolutionLevel = ResolutionLevel.Level5,
             zoneLevel = ZoneLevel.Level1,
             accuracy = Accuracy.Start,
-            date = 0B11_11110001U,
-            time = 0B1_00010111_10011100U,
-            zone = 0B1000U,
+            date = 0b11_11110001U,
+            time = 0b1_00010111_10011100U,
+            zone = 0b1000U,
             plusLeapSeconds = null,
             minusLeapSeconds = null,
         )
@@ -54,8 +54,8 @@ class TestEncode {
             resolutionLevel = ResolutionLevel.Level5,
             zoneLevel = ZoneLevel.Level1,
             accuracy = Accuracy.Start,
-            date = 0B11_11110001U,
-            time = 0B1_00010111_10011100U,
+            date = 0b11_11110001U,
+            time = 0b1_00010111_10011100U,
             zone = 0U,
             plusLeapSeconds = null,
             minusLeapSeconds = null,
@@ -74,8 +74,8 @@ class TestEncode {
             resolutionLevel = ResolutionLevel.Level5,
             zoneLevel = ZoneLevel.Level0,
             accuracy = Accuracy.Start,
-            date = 0B11_11110001U,
-            time = 0B1_00010111_10011100U,
+            date = 0b11_11110001U,
+            time = 0b1_00010111_10011100U,
             zone = null,
             plusLeapSeconds = null,
             minusLeapSeconds = null,
@@ -95,7 +95,7 @@ class TestGetJDN {
         val input = "2019-05-05"
         val (year, month, day) = input.split("-").map { it.toInt() }
         val actual = getJDN(year, month, day)
-        val expected = 0B00100101_10000011_11110001UL // 2458609
+        val expected = 0b00100101_10000011_11110001UL // 2458609
         println(actual)
         println(expected)
         assert(actual == expected)
