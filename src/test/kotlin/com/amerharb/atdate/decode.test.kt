@@ -2,7 +2,7 @@ package com.amerharb.atdate
 
 import kotlin.test.Test
 
-// test encode function
+// test decode function
 class TestDecode {
     @OptIn(ExperimentalUnsignedTypes::class)
     @Test
@@ -44,6 +44,26 @@ class TestDecode {
             plusLeapSeconds = null,
             minusLeapSeconds = null,
         )
+        println(actual)
+        println(expected)
+        assert(actual == expected)
+    }
+}
+
+class TestGetDateFromJDN {
+    @Test
+    fun test20190505() {
+        val actual = getDateFromJDN(2458609L)
+        val expected = BasicISODate(2019, 5, 5)
+        println(actual)
+        println(expected)
+        assert(actual == expected)
+    }
+
+    @Test
+    fun testDay0() {
+        val actual = getDateFromJDN(0)
+        val expected = BasicISODate(-4713, 11, 24)
         println(actual)
         println(expected)
         assert(actual == expected)
