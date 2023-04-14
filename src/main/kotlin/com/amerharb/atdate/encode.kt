@@ -9,7 +9,7 @@ fun encode(input: String): AtDate {
     val datePart = datetimeArr[0]
     val timezonePart = if (datetimeArr.size > 1) datetimeArr[1] else ""
     val prop = ad.substringAfter("{").substringBefore("}")
-    val propArr = prop.trim().split(",").map { it.trim() }
+    val propArr = prop.trim().split(" ").map { it.trim() }
 
     val dValue = propArr.find { it.startsWith("d:") }?.substringAfter(":")
     val d = dValue?.toUInt() ?: 1U
