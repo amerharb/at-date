@@ -16,7 +16,7 @@ data class AtDate(
     fun getPayload(): Array<UByte> {
         val payload = mutableListOf<UByte>()
         payload.addAll(getHeader())
-        // TODO: add body byes
+        payload.addAll(getBody())
         return payload.toTypedArray()
     }
 
@@ -75,6 +75,44 @@ data class AtDate(
             Accuracy.End -> TODO()
         }
         return arrayOf(header)
+    }
+
+    private fun getBody(): Array<UByte> {
+        var body: ULong = 0U
+        // move date bits to the left then add it to body
+        val shiftDate = 64 - getRangeBitCount()
+        body = body or (date shl shiftDate)
+        // move time bits to the left then add it to body
+        val shiftTime = shiftDate - getResolutionBitCount()
+        body = body or ((time ?: 0U) shl shiftTime)
+        // move zone bits to the left then add it to body
+        val shiftZone = shiftTime - getZoneBitCount()
+        body = body or ((zone ?: 0U) shl shiftZone)
+        // move plus leap seconds bits to the left then add it to body
+        val shiftPlusLeapSeconds = shiftZone - (getLeapSecondsBitCount() / 2)
+        body = body or ((plusLeapSeconds ?: 0U) shl shiftPlusLeapSeconds)
+        // move minus leap seconds bits to the left then add it to body
+        val shiftMinusLeapSeconds = shiftPlusLeapSeconds - (getLeapSecondsBitCount() / 2)
+        body = body or ((minusLeapSeconds ?: 0U) shl shiftMinusLeapSeconds)
+
+        // how many bytes in body
+        val bodyByteCount = if (getBodyBitCount() % 8 == 0) {
+            getBodyBitCount() / 8
+        } else {
+            getBodyBitCount() / 8 + 1
+        }
+
+        // TODO: support body longer than 8 bytes
+        val bodyList = mutableListOf<UByte>()
+        for (i in (64 - 8) downTo   (64 - (getHeadBitCount() + getBodyBitCount())) step 8) {
+            bodyList.add((body shr i).toUByte())
+        }
+        return bodyList.toTypedArray()
+    }
+
+    private fun getHeadBitCount(): Int {
+        // TODO: support header with more than 1 byte
+        return 8
     }
 
     private fun getBodyBitCount(): Int {
