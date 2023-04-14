@@ -67,4 +67,25 @@ class TestAtDate {
         println(actual)
         assert(expected == actual)
     }
+
+    @Test
+    @OptIn(ExperimentalUnsignedTypes::class)
+    fun testGetNotationExample2() {
+        val example2 = AtDate(
+            rangeLevel = RangeLevel.Level1,
+            resolutionLevel = ResolutionLevel.Level5,
+            zoneLevel = ZoneLevel.Level1,
+            accuracy = Accuracy.Start,
+            date = 0b11_11110001U,
+            time = 0b1_00010111_10011100U,
+            zone = 0b1000U,
+            plusLeapSeconds = null,
+            minusLeapSeconds = null,
+        )
+        val expected = "@2019-05-05T19:53:00+02:00 { d:1 t:5 z:1 a:s l:0-0 }@"
+        val actual = example2.getNotation()
+        println(expected)
+        println(actual)
+        assert(expected == actual)
+    }
 }

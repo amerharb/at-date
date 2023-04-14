@@ -194,3 +194,24 @@ fun getTimeFromTimeLong(timeLevel: ResolutionLevel, time: ULong): BasicISOTime {
         else -> TODO() // support for other levels
     }
 }
+
+fun getZone(zoneLevel: ZoneLevel, zone: ULong): String {
+    return when (zoneLevel) {
+        ZoneLevel.Level0 -> ""
+        ZoneLevel.Level1 -> { // 7 bits
+            val sign = if (zone.toInt() and 0b100_0000 != 0) "-" else "+"
+            val hour = (zone.toInt() and 0b111100) shr 2
+            val minute = (zone.toInt() and 0b000011) * 15
+            "$sign${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}"
+        }
+        ZoneLevel.Level2 -> TODO()
+        ZoneLevel.Level3 -> TODO()
+        ZoneLevel.Level4 -> TODO()
+        ZoneLevel.Level5 -> TODO()
+        ZoneLevel.Level6 -> TODO()
+        ZoneLevel.Level7 -> TODO()
+        ZoneLevel.Level8 -> TODO()
+        ZoneLevel.Level9 -> TODO()
+        ZoneLevel.Level10 -> TODO()
+    }
+}

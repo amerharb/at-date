@@ -28,11 +28,10 @@ data class AtDate(
         if (time != null) {
             notation.append("T")
             val isoTime = getTimeFromTimeLong(resolutionLevel, time)
-            notation.append("${isoTime.hour}:${isoTime.minute}:${isoTime.second}")
+            notation.append("${withLeadingZero(isoTime.hour)}:${withLeadingZero(isoTime.minute)}:${withLeadingZero(isoTime.second)}")
         }
         if (zone != null) {
-            //TODO: later to support zone
-//            notation.append(getZone())
+            notation.append(getZone(zoneLevel, zone))
         }
         notation.append(" {")
         notation.append(" d:${rangeLevel.no}")
@@ -46,6 +45,11 @@ data class AtDate(
 
     private fun withLeadingZero(number: Long): String {
         return if (number < 10) "0$number" else "$number"
+    }
+
+    private fun withLeadingZero(number: Double): String {
+        val noRightZero = number.toString().replace(Regex("\\.?0+$"), "")
+        return if (number < 10) "0$noRightZero" else "$noRightZero"
     }
 
     private fun getHeader(): Array<UByte> {
