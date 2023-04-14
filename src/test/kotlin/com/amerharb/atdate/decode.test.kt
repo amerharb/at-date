@@ -50,10 +50,10 @@ class TestDecode {
     }
 }
 
-class TestGetDateFromJDN {
+class TestGetDateFromJdn {
     @Test
     fun test20190505() {
-        val actual = getDateFromJDN(2458609L)
+        val actual = getDateFromJdn(2458609L)
         val expected = BasicISODate(2019, 5, 5)
         println(actual)
         println(expected)
@@ -62,7 +62,7 @@ class TestGetDateFromJDN {
 
     @Test
     fun testDay0() {
-        val actual = getDateFromJDN(0)
+        val actual = getDateFromJdn(0)
         val expected = BasicISODate(-4713, 11, 24)
         println(actual)
         println(expected)

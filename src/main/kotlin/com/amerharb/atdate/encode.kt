@@ -93,7 +93,7 @@ fun encode(input: String): AtDate {
     }
 
     val (year, month, day) = datePart.split("-").map { it.toInt() }
-    val jdn = getJDN(year, month, day)
+    val jdn = getJdn(year, month, day)
     val dateULong = when (rangeLevel) {
         RangeLevel.Level0 -> TODO() // range level 0 only allowed with tp
         RangeLevel.Level1 -> {
@@ -187,7 +187,7 @@ fun encode(input: String): AtDate {
     )
 }
 
-fun getJDN(year: Int, month: Int, day: Int): ULong {
+fun getJdn(year: Int, month: Int, day: Int): ULong {
     val p1 = (1461 * (year + 4800 + (month - 14) / 12)) / 4
     val p2 = (367 * (month - 2 - 12 * ((month - 14) / 12))) / 12
     val p3 = -(3 * ((year + 4900 + (month - 14) / 12) / 100)) / 4 + day - 32075

@@ -118,7 +118,7 @@ data class BasicISODate(
     val day: Long,
 )
 
-fun getDateFromJDN(jdn: Long): BasicISODate {
+fun getDateFromJdn(jdn: Long): BasicISODate {
     val a = jdn + 32044
     val b = (4 * a + 3) / 146097
     val c = a - (146097 * b) / 4
