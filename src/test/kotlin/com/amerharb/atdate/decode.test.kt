@@ -61,9 +61,19 @@ class TestGetDateFromJdn {
     }
 
     @Test
+    fun test20200606(){
+        val actual = getDateFromJdn(2459007L)
+        val expected = BasicISODate(2020, 6, 6)
+        println(actual)
+        println(expected)
+        assert(actual == expected)
+
+    }
+
+    @Test
     fun testDay0() {
         val actual = getDateFromJdn(0)
-        val expected = BasicISODate(-4713, 11, 24)
+        val expected= BasicISODate(-4713, 11, 24)
         println(actual)
         println(expected)
         assert(actual == expected)
