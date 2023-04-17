@@ -12,51 +12,15 @@ fun encode(input: String): AtDate {
     val propArr = prop.trim().split(" ").map { it.trim() }
 
     val dValue = propArr.find { it.startsWith("d:") }?.substringAfter(":")
-    val d = dValue?.toUInt() ?: 1U
-    val rangeLevel = when (d) {
-        0U -> RangeLevel.Level0
-        1U -> RangeLevel.Level1
-        2U -> RangeLevel.Level2
-        3U -> RangeLevel.Level3
-        4U -> RangeLevel.Level4
-        else -> throw Exception("Invalid date level")
-    }
+    val d = dValue?.toUByte() ?: 1U
+    val rangeLevel = RangeLevel.values().find { it.no == d } ?: throw Exception("Invalid date level")
 
     val tValue = propArr.find { it.startsWith("t:") }?.substringAfter(":")
-    val t = tValue?.toUInt() ?: 0U
-    val resolutionLevel = when (t) {
-        0U -> ResolutionLevel.Level0
-        1U -> ResolutionLevel.Level1
-        2U -> ResolutionLevel.Level2
-        3U -> ResolutionLevel.Level3
-        4U -> ResolutionLevel.Level4
-        5U -> ResolutionLevel.Level5
-        6U -> ResolutionLevel.Level6
-        7U -> ResolutionLevel.Level7
-        8U -> ResolutionLevel.Level8
-        9U -> ResolutionLevel.Level9
-        10U -> ResolutionLevel.Level10
-        11U -> ResolutionLevel.Level11
-        12U -> ResolutionLevel.Level12
-        13U -> ResolutionLevel.Level13
-        14U -> ResolutionLevel.Level14
-        15U -> ResolutionLevel.Level15
-        16U -> ResolutionLevel.Level16
-        17U -> ResolutionLevel.Level17
-        18U -> ResolutionLevel.Level18
-        19U -> ResolutionLevel.Level19
-        20U -> ResolutionLevel.Level20
-        else -> throw Exception("Invalid resolution level")
-    }
+    val t = tValue?.toUByte() ?: 0U
+    val resolutionLevel = ResolutionLevel.values().find { it.no == t } ?: throw Exception("Invalid resolution level")
 
-    val aValue = propArr.find { it.startsWith("a:") }?.substringAfter(":")
-    val accuracy = when (aValue?.lowercase()) {
-        "s" -> Accuracy.Start
-        "w" -> Accuracy.Whole
-        "e" -> Accuracy.End
-        null -> Accuracy.Start
-        else -> throw Exception("Invalid accuracy level")
-    }
+    val aValue = propArr.find { it.startsWith("a:") }?.substringAfter(":")?.firstOrNull() ?: 's'
+    val accuracy = Accuracy.values().find { it.letter == aValue } ?: throw Exception("Invalid accuracy level")
 
     val lValue = propArr.find { it.startsWith("l:") }?.substringAfter(":")
     val lList = lValue?.split("-")?.map { it.toULong() } ?: listOf(0UL, 0UL)
@@ -76,21 +40,8 @@ fun encode(input: String): AtDate {
     }
 
     val zValue = propArr.find { it.startsWith("z:") }?.substringAfter(":")
-    val providedZoneLevel = when (zValue?.toUInt()) {
-        null -> null
-        0U -> ZoneLevel.Level0
-        1U -> ZoneLevel.Level1
-        2U -> ZoneLevel.Level2
-        3U -> ZoneLevel.Level3
-        4U -> ZoneLevel.Level4
-        5U -> ZoneLevel.Level5
-        6U -> ZoneLevel.Level6
-        7U -> ZoneLevel.Level7
-        8U -> ZoneLevel.Level8
-        9U -> ZoneLevel.Level9
-        10U -> ZoneLevel.Level10
-        else -> throw Exception("Invalid date level")
-    }
+    val z = zValue?.toUByte()
+    val providedZoneLevel = ZoneLevel.values().find { it.no == z }
 
     val (year, month, day) = datePart.split("-").map { it.toInt() }
     val jdn = getJdn(year, month, day)

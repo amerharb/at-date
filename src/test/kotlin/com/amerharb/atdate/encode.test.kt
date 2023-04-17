@@ -27,7 +27,7 @@ class TestEncode {
 
     @Test
     fun example2() {
-        val input = "@2019-05-05T19:53:00+02:00 {d:1, t:5, a:s, l:0-0, z:1}@"
+        val input = "@2019-05-05T19:53:00+02:00 {d:1 t:5 a:s l:0-0 z:1}@"
         val actual = encode(input)
         val expected = AtDate(
             rangeLevel = RangeLevel.Level1,
@@ -47,7 +47,7 @@ class TestEncode {
 
     @Test
     fun example2UTC() {
-        val input = "@2019-05-05T19:53:00Z {d:1, t:5, a:s, l:0-0}@"
+        val input = "@2019-05-05T19:53:00Z {d:1 t:5 a:s l:0-0}@"
         val actual = encode(input)
         val expected = AtDate(
             rangeLevel = RangeLevel.Level1,
@@ -67,7 +67,7 @@ class TestEncode {
 
     @Test
     fun example2LocalTime() {
-        val input = "@2019-05-05T19:53:00 {d:1, t:5, a:s, l:0-0}@"
+        val input = "@2019-05-05T19:53:00 {d:1 t:5 a:s l:0-0}@"
         val actual = encode(input)
         val expected = AtDate(
             rangeLevel = RangeLevel.Level1,
