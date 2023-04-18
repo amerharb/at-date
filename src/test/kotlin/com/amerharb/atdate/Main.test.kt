@@ -7,7 +7,7 @@ import kotlin.test.assertEquals
 
 class TestMain {
     @Test
-    fun testCase0() {
+    fun testEncodeExample2() {
         val outContent = ByteArrayOutputStream()
         val originalOut = System.out
         System.setOut(PrintStream(outContent))
@@ -26,7 +26,7 @@ class TestMain {
     }
 
     @Test
-    fun testCase1() {
+    fun testEncodeExample3() {
         val outContent = ByteArrayOutputStream()
         val originalOut = System.out
         System.setOut(PrintStream(outContent))
@@ -39,6 +39,24 @@ class TestMain {
                           |Encoding...
                           |Hex: 0x459407e3179c100202
                           |Bin: 0b010001011001010000000111111000110001011110011100000100000000001000000010
+                          |""".trimMargin("|")
+        assertEquals(expected, actual)
+        System.setOut(originalOut)
+    }
+
+    @Test
+    fun testDecodeExample1() {
+        val outContent = ByteArrayOutputStream()
+        val originalOut = System.out
+        System.setOut(PrintStream(outContent))
+        val input = "0xC007E2"
+        main(arrayOf(input))
+        val actual = outContent.toString()
+        // 0xD6 07 E3 17 9C 10
+        val expected = """|@Date
+                          |input: $input
+                          |Decoding...
+                          |Notation: 0x@2019-05-05 { d:1 t:0 z:0 a:s l:0-0 }@
                           |""".trimMargin("|")
         assertEquals(expected, actual)
         System.setOut(originalOut)
