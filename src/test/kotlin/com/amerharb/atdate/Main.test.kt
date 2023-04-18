@@ -1,8 +1,9 @@
 package com.amerharb.atdate
 
-import org.junit.jupiter.api.Test
 import java.io.ByteArrayOutputStream
 import java.io.PrintStream
+import kotlin.test.Test
+import kotlin.test.Ignore
 import kotlin.test.assertEquals
 
 class TestMain {
@@ -50,6 +51,25 @@ class TestMain {
         val originalOut = System.out
         System.setOut(PrintStream(outContent))
         val input = "0xC007E2"
+        main(arrayOf(input))
+        val actual = outContent.toString()
+        // 0xD6 07 E3 17 9C 10
+        val expected = """|@Date
+                          |input: $input
+                          |Decoding...
+                          |Notation: @2019-05-05 { d:1 t:0 z:0 a:s l:0-0 }@
+                          |""".trimMargin("|")
+        assertEquals(expected, actual)
+        System.setOut(originalOut)
+    }
+
+    @Ignore
+    @Test
+    fun testDecodeExample3() {
+        val outContent = ByteArrayOutputStream()
+        val originalOut = System.out
+        System.setOut(PrintStream(outContent))
+        val input = "0x459407e3179c100202"
         main(arrayOf(input))
         val actual = outContent.toString()
         // 0xD6 07 E3 17 9C 10

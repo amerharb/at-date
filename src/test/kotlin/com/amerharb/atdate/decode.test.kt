@@ -1,6 +1,7 @@
 package com.amerharb.atdate
 
 import kotlin.test.Test
+import kotlin.test.assertEquals
 
 // test decode function
 class TestDecode {
@@ -24,7 +25,7 @@ class TestDecode {
         )
         println(actual)
         println(expected)
-        assert(actual == expected)
+        assertEquals(expected, actual)
     }
 
     @OptIn(ExperimentalUnsignedTypes::class)
@@ -46,7 +47,7 @@ class TestDecode {
         )
         println(actual)
         println(expected)
-        assert(actual == expected)
+        assertEquals(expected, actual)
     }
 }
 
@@ -57,7 +58,7 @@ class TestGetDateFromJdn {
         val expected = BasicISODate(2019, 5, 5)
         println(actual)
         println(expected)
-        assert(actual == expected)
+        assertEquals(expected, actual)
     }
 
     @Test
@@ -66,6 +67,6 @@ class TestGetDateFromJdn {
         val expected = BasicISODate(-4713, 11, 24)
         println(actual)
         println(expected)
-        assert(actual == expected)
+        assertEquals(expected, actual)
     }
 }
