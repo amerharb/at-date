@@ -63,8 +63,8 @@ data class AtDate(
         val headerCount = getHeadBitCount() / 8
 
         return when (headerCount) {
-            1 -> getHeader1Byte()
-            2 -> getHeader2Bytes()
+            1 -> getMomentHeader1Byte()
+            2 -> getMomentHeader2Bytes()
             3 -> TODO() // needs 3-bytes header (not supported yet)
             else -> throw Exception("Header count is not valid")
         }
@@ -104,17 +104,16 @@ data class AtDate(
         return bodyList.toTypedArray()
     }
 
-    private fun getHeader1Byte(): Array<UByte> {
+    private fun getMomentHeader1Byte(): Array<UByte> {
         /** header design IKDTTTZA */
         var header: UByte = 0U
         header = header or 0b1000_0000U // I
-        header = header or 0b0100_0000U // K
+        header = header or 0b0100_0000U // K (always 1 for Moment)
         header = when (rangeLevel) { // D
-            RangeLevel.Level0 -> TODO()
+            RangeLevel.Level0 -> throw Exception("Range level $rangeLevel is not valid in Moment header")
             RangeLevel.Level1 -> header and 0b1101_1111U
             RangeLevel.Level2 -> header or 0b0010_0000U
-            RangeLevel.Level3 -> TODO() // needs 2-bytes header
-            RangeLevel.Level4 -> TODO()
+            else -> throw Exception("Range level $rangeLevel is not valid in 1-byte header")
         }
         header = when (resolutionLevel) { // TTT
             ResolutionLevel.Level0 -> header or 0b0000_0000U
@@ -130,25 +129,17 @@ data class AtDate(
         header = when (zoneLevel) { // Z
             ZoneLevel.Level0 -> header or 0b0000_0000U
             ZoneLevel.Level1 -> header or 0b0000_0010U
-            ZoneLevel.Level2 -> TODO()
-            ZoneLevel.Level3 -> TODO()
-            ZoneLevel.Level4 -> TODO()
-            ZoneLevel.Level5 -> TODO()
-            ZoneLevel.Level6 -> TODO()
-            ZoneLevel.Level7 -> TODO()
-            ZoneLevel.Level8 -> TODO()
-            ZoneLevel.Level9 -> TODO()
-            ZoneLevel.Level10 -> TODO()
+            else -> throw Exception("Zone level $zoneLevel is not valid in 1-byte header")
         }
         header = when (accuracy) { // A
             Accuracy.Start -> header or 0b0000_0000U
             Accuracy.Whole -> header or 0b0000_0001U
-            Accuracy.End -> TODO()
+            Accuracy.End -> throw Exception("Accuracy End is not valid in 1-byte header")
         }
         return arrayOf(header)
     }
 
-    private fun getHeader2Bytes(): Array<UByte> {
+    private fun getMomentHeader2Bytes(): Array<UByte> {
         /** header design IKDDTTTT IZZZLLAA */
         var header1: UByte = 0U
         var header2: UByte = 0U
@@ -157,7 +148,7 @@ data class AtDate(
 
         header1 = header1 or 0b0100_0000U // K
         header1 = when (rangeLevel) { // DD
-            RangeLevel.Level0 -> TODO()
+            RangeLevel.Level0 -> throw Exception("Range level $rangeLevel is not valid in Moment header")
             RangeLevel.Level1 -> header1 and 0b1100_1111U
             RangeLevel.Level2 -> header1 or 0b0001_0000U
             RangeLevel.Level3 -> header1 or 0b0010_0000U
@@ -243,15 +234,30 @@ data class AtDate(
         return when (rangeLevel) {
             RangeLevel.Level0 -> throw Exception("Level 0 is not supported in Date")
             RangeLevel.Level1 -> {
-                date.toLong() or 0b00100101_10000000_00000000L
+                ((date and 0b01111111_11111111UL) or 0b00100101_10000000_00000000UL).toLong()
             }
 
             RangeLevel.Level2 -> {
                 date.toLong()
             }
 
-            RangeLevel.Level3 -> TODO()
-            RangeLevel.Level4 -> TODO()
+            RangeLevel.Level3 -> { // 32 bits 0 JDN = 0x80000000 = 0b10000000_00000000_00000000_00000000L
+                val right31 = date and 0x7F_FF_FF_FFUL
+                if (date >= 0x80_00_00_00UL) {
+                    right31.toLong()
+                } else {
+                    0L - (0x80_00_00_00UL - right31).toLong()
+                }
+            }
+
+            RangeLevel.Level4 -> { // 48 bits 0 JDN = 0x800000000000 = 0b10000000_00000000_00000000_00000000_00000000_00000000L
+                val right47 = date and 0x7F_FF_FF_FF_FF_FFUL
+                if (date >= 0x80_00_00_00_00_00UL) {
+                    right47.toLong()
+                } else {
+                    0L - (0x80_00_00_00_00_00UL - right47).toLong()
+                }
+            }
         }
 
     }
