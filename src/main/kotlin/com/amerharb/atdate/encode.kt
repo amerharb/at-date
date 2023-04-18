@@ -4,7 +4,7 @@ fun encode(input: String): AtDate {
     // takes input like "@2019-01-01T00:00:00Z {d:1, r:0, a:s, l:0-0}@"
     // and returns an AtDate object
     val ad = input.trim().substringAfter("@").substringBefore("@").trim()
-    val datetime = ad.substringAfter("@").substringBefore(" ") // TODO: change this to regex that take "{"
+    val datetime = ad.substringBefore("{").trim()
     val datetimeArr = datetime.split("T")
     val datePart = datetimeArr[0]
     val timezonePart = if (datetimeArr.size > 1) datetimeArr[1] else ""

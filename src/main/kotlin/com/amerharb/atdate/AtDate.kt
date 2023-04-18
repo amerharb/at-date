@@ -28,7 +28,13 @@ data class AtDate(
         if (time != null) {
             notation.append("T")
             val isoTime = getTimeFromTimeLong(resolutionLevel, time)
-            notation.append("${withLeadingZero(isoTime.hour)}:${withLeadingZero(isoTime.minute)}:${withLeadingZero(isoTime.second)}")
+            notation.append(
+                "${withLeadingZero(isoTime.hour)}:${withLeadingZero(isoTime.minute)}:${
+                    withLeadingZero(
+                        isoTime.second
+                    )
+                }"
+            )
         }
         if (zone != null) {
             notation.append(getZone(zoneLevel, zone))
@@ -44,16 +50,61 @@ data class AtDate(
     }
 
     private fun withLeadingZero(number: Long): String {
-        return if (number < 10) "0$number" else "$number"
+        return number.toString().padStart(2, '0')
     }
 
     private fun withLeadingZero(number: Double): String {
         val noRightZero = number.toString().replace(Regex("\\.?0+$"), "")
-        return if (number < 10) "0$noRightZero" else "$noRightZero"
+        return if (number < 10) "0$noRightZero" else noRightZero
     }
 
     private fun getHeader(): Array<UByte> {
-        // TODO: later to support header with more than 1 byte
+        // check number of header bytes needed
+        val headerCount = getHeadBitCount() / 8
+
+        return when (headerCount) {
+            1 -> getHeader1Byte()
+            2 -> getHeader2Bytes()
+            3 -> TODO() // needs 3-bytes header (not supported yet)
+            else -> throw Exception("Header count is not valid")
+        }
+    }
+
+    private fun getBody(): Array<UByte> {
+        var body: ULong = 0U
+        // move date bits to the left then add it to body
+        val shiftDate = 64 - getRangeBitCount()
+        body = body or (date shl shiftDate)
+        // move time bits to the left then add it to body
+        val shiftTime = shiftDate - getResolutionBitCount()
+        body = body or ((time ?: 0U) shl shiftTime)
+        // move zone bits to the left then add it to body
+        val shiftZone = shiftTime - getZoneBitCount()
+        body = body or ((zone ?: 0U) shl shiftZone)
+        // move plus leap seconds bits to the left then add it to body
+        val shiftPlusLeapSeconds = shiftZone - (getLeapSecondsBitCount() / 2)
+        body = body or ((plusLeapSeconds ?: 0U) shl shiftPlusLeapSeconds)
+        // move minus leap seconds bits to the left then add it to body
+        val shiftMinusLeapSeconds = shiftPlusLeapSeconds - (getLeapSecondsBitCount() / 2)
+        body = body or ((minusLeapSeconds ?: 0U) shl shiftMinusLeapSeconds)
+
+        // how many bytes in body
+        val bodyBitCount = getBodyBitCount()
+        val bodyByteCount = if (bodyBitCount % 8 == 0) {
+            bodyBitCount / 8
+        } else {
+            bodyBitCount / 8 + 1
+        }
+
+        // TODO: support body longer than 8 bytes
+        val bodyList = mutableListOf<UByte>()
+        for (i in (64 - 8) downTo (64 - (8 + bodyBitCount)) step 8) {
+            bodyList.add((body shr i).toUByte())
+        }
+        return bodyList.toTypedArray()
+    }
+
+    private fun getHeader1Byte(): Array<UByte> {
         /** header design IKDTTTZA */
         var header: UByte = 0U
         header = header or 0b1000_0000U // I
@@ -74,19 +125,7 @@ data class AtDate(
             ResolutionLevel.Level5 -> header or 0b0001_0100U
             ResolutionLevel.Level6 -> header or 0b0001_1000U
             ResolutionLevel.Level7 -> header or 0b0001_1100U
-            ResolutionLevel.Level8 -> TODO()
-            ResolutionLevel.Level9 -> TODO()
-            ResolutionLevel.Level10 -> TODO()
-            ResolutionLevel.Level11 -> TODO()
-            ResolutionLevel.Level12 -> TODO()
-            ResolutionLevel.Level13 -> TODO()
-            ResolutionLevel.Level14 -> TODO()
-            ResolutionLevel.Level15 -> TODO()
-            ResolutionLevel.Level16 -> TODO()
-            ResolutionLevel.Level17 -> TODO()
-            ResolutionLevel.Level18 -> TODO()
-            ResolutionLevel.Level19 -> TODO()
-            ResolutionLevel.Level20 -> TODO()
+            else -> throw Exception("Resolution level $resolutionLevel is not valid in 1-byte header")
         }
         header = when (zoneLevel) { // Z
             ZoneLevel.Level0 -> header or 0b0000_0000U
@@ -109,42 +148,83 @@ data class AtDate(
         return arrayOf(header)
     }
 
-    private fun getBody(): Array<UByte> {
-        var body: ULong = 0U
-        // move date bits to the left then add it to body
-        val shiftDate = 64 - getRangeBitCount()
-        body = body or (date shl shiftDate)
-        // move time bits to the left then add it to body
-        val shiftTime = shiftDate - getResolutionBitCount()
-        body = body or ((time ?: 0U) shl shiftTime)
-        // move zone bits to the left then add it to body
-        val shiftZone = shiftTime - getZoneBitCount()
-        body = body or ((zone ?: 0U) shl shiftZone)
-        // move plus leap seconds bits to the left then add it to body
-        val shiftPlusLeapSeconds = shiftZone - (getLeapSecondsBitCount() / 2)
-        body = body or ((plusLeapSeconds ?: 0U) shl shiftPlusLeapSeconds)
-        // move minus leap seconds bits to the left then add it to body
-        val shiftMinusLeapSeconds = shiftPlusLeapSeconds - (getLeapSecondsBitCount() / 2)
-        body = body or ((minusLeapSeconds ?: 0U) shl shiftMinusLeapSeconds)
+    private fun getHeader2Bytes(): Array<UByte> {
+        /** header design IKDDTTTT IZZZLLAA */
+        var header1: UByte = 0U
+        var header2: UByte = 0U
+        header1 = header1 or 0b0000_0000U // I
+        header2 = header2 or 0b1000_0000U // I
 
-        // how many bytes in body
-        val bodyByteCount = if (getBodyBitCount() % 8 == 0) {
-            getBodyBitCount() / 8
-        } else {
-            getBodyBitCount() / 8 + 1
+        header1 = header1 or 0b0100_0000U // K
+        header1 = when (rangeLevel) { // DD
+            RangeLevel.Level0 -> TODO()
+            RangeLevel.Level1 -> header1 and 0b1100_1111U
+            RangeLevel.Level2 -> header1 or 0b0001_0000U
+            RangeLevel.Level3 -> header1 or 0b0010_0000U
+            RangeLevel.Level4 -> header1 or 0b0011_0000U
         }
-
-        // TODO: support body longer than 8 bytes
-        val bodyList = mutableListOf<UByte>()
-        for (i in (64 - 8) downTo (64 - (getHeadBitCount() + getBodyBitCount())) step 8) {
-            bodyList.add((body shr i).toUByte())
+        header1 = when (resolutionLevel) { // TTTT
+            ResolutionLevel.Level0 -> header1 or 0b0000_0000U
+            ResolutionLevel.Level1 -> header1 or 0b0000_0001U
+            ResolutionLevel.Level2 -> header1 or 0b0000_0010U
+            ResolutionLevel.Level3 -> header1 or 0b0000_0011U
+            ResolutionLevel.Level4 -> header1 or 0b0000_0100U
+            ResolutionLevel.Level5 -> header1 or 0b0000_0101U
+            ResolutionLevel.Level6 -> header1 or 0b0000_0110U
+            ResolutionLevel.Level7 -> header1 or 0b0000_0111U
+            ResolutionLevel.Level8 -> header1 or 0b0000_1000U
+            ResolutionLevel.Level9 -> header1 or 0b0000_1001U
+            ResolutionLevel.Level10 -> header1 or 0b0000_1010U
+            ResolutionLevel.Level11 -> header1 or 0b0000_1011U
+            ResolutionLevel.Level12 -> header1 or 0b0000_1100U
+            ResolutionLevel.Level13 -> header1 or 0b0000_1101U
+            ResolutionLevel.Level14 -> header1 or 0b0000_1110U
+            ResolutionLevel.Level15 -> header1 or 0b0000_1111U
+            else -> throw Exception("ResolutionLevel $resolutionLevel is not supported in 2-bytes header")
         }
-        return bodyList.toTypedArray()
+        header2 = when (zoneLevel) { // ZZZ
+            ZoneLevel.Level0 -> header2 or 0b0000_0000U
+            ZoneLevel.Level1 -> header2 or 0b0001_0000U
+            ZoneLevel.Level2 -> header2 or 0b0010_0000U
+            ZoneLevel.Level3 -> header2 or 0b0011_0000U
+            ZoneLevel.Level4 -> header2 or 0b0100_0000U
+            ZoneLevel.Level5 -> header2 or 0b0101_0000U
+            ZoneLevel.Level6 -> header2 or 0b0110_0000U
+            ZoneLevel.Level7 -> header2 or 0b0111_0000U
+            else -> throw Exception("ZoneLevel $zoneLevel is not supported in 2-bytes header")
+        }
+        header2 = when (leapSecondsFlag) { // LL
+            (0U).toUByte() -> header2 or 0b0000_0000U
+            (1U).toUByte() -> header2 or 0b0000_0100U
+            (2U).toUByte() -> header2 or 0b0000_1000U
+            (3U).toUByte() -> header2 or 0b0000_1100U
+            else -> throw Exception("LeapSecondsFlag $leapSecondsFlag is not supported in 2-bytes header")
+        }
+        header2 = when (accuracy) { // AA
+            Accuracy.Start -> header2 or 0b0000_0000U
+            Accuracy.Whole -> header2 or 0b0000_0001U
+            Accuracy.End -> header2 or 0b0000_0010U
+        }
+        return arrayOf(header1, header2)
     }
 
     private fun getHeadBitCount(): Int {
-        // TODO: support header with more than 1 byte
-        return 8
+        var headBitCount = 8
+        if (rangeLevel.no > RangeLevel.Level2.no
+            || resolutionLevel.no > ResolutionLevel.Level7.no
+            || zoneLevel.no > ZoneLevel.Level1.no
+            || accuracy == Accuracy.End
+            || leapSecondsFlag > 0U
+        ) {
+            headBitCount += 8
+        }
+        if (resolutionLevel.no > ResolutionLevel.Level15.no
+            || zoneLevel.no > ZoneLevel.Level7.no
+            || leapSecondsFlag > 3U
+        ) {
+            headBitCount += 8
+        }
+        return headBitCount
     }
 
     private fun getBodyBitCount(): Int {
@@ -160,14 +240,14 @@ data class AtDate(
     private fun getLeapSecondsBitCount(): Int = getLeapSecondsBitCount(this.leapSecondsFlag)
 
     private fun getJdn(): Long {
-        when (rangeLevel) {
+        return when (rangeLevel) {
             RangeLevel.Level0 -> throw Exception("Level 0 is not supported in Date")
             RangeLevel.Level1 -> {
-                return date.toLong() or 0b00100101_10000000_00000000L
+                date.toLong() or 0b00100101_10000000_00000000L
             }
 
             RangeLevel.Level2 -> {
-                return date.toLong()
+                date.toLong()
             }
 
             RangeLevel.Level3 -> TODO()
