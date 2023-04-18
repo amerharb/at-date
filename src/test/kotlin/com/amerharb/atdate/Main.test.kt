@@ -15,7 +15,6 @@ class TestMain {
         val input = "@2019-05-05T19:53:00+02:00 {d:1 t:5 a:s l:0-0}@"
         main(arrayOf(input))
         val actual = outContent.toString()
-        // 0xD6 07 E3 17 9C 10
         val expected = """|@Date
                           |input: $input
                           |Encoding...
@@ -34,7 +33,6 @@ class TestMain {
         val input = "@2019-05-05T19:53:00+02:00 {d:1 t:5 a:s l:1-1}@"
         main(arrayOf(input))
         val actual = outContent.toString()
-        // 0xD6 07 E3 17 9C 10
         val expected = """|@Date
                           |input: $input
                           |Encoding...
@@ -53,7 +51,6 @@ class TestMain {
         val input = "0xC007E2"
         main(arrayOf(input))
         val actual = outContent.toString()
-        // 0xD6 07 E3 17 9C 10
         val expected = """|@Date
                           |input: $input
                           |Decoding...
@@ -71,7 +68,6 @@ class TestMain {
         val input = "0x459407e3179c100202"
         main(arrayOf(input))
         val actual = outContent.toString()
-        // 0xD6 07 E3 17 9C 10
         val expected = """|@Date
                           |input: $input
                           |Decoding...
