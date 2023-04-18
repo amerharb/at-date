@@ -63,7 +63,6 @@ class TestMain {
         System.setOut(originalOut)
     }
 
-    @Ignore
     @Test
     fun testDecodeExample3() {
         val outContent = ByteArrayOutputStream()
@@ -76,7 +75,7 @@ class TestMain {
         val expected = """|@Date
                           |input: $input
                           |Decoding...
-                          |Notation: 0x@2019-05-05 { d:1 t:0 z:0 a:s l:0-0 }@
+                          |Notation: @2019-05-05T19:53:00+02:00 { d:1 t:5 z:1 a:s l:1-1 }@
                           |""".trimMargin("|")
         assertEquals(expected, actual)
         System.setOut(originalOut)
