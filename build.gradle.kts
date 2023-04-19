@@ -3,8 +3,8 @@ plugins {
     application
 }
 
-group = "org.example"
-version = "1.0-SNAPSHOT"
+group = "com.amerharb.atdate"
+version = "0.0.3"
 
 repositories {
     mavenCentral()
