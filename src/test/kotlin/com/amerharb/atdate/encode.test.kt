@@ -1,6 +1,7 @@
 package com.amerharb.atdate
 
 import kotlin.test.Test
+import kotlin.test.assertEquals
 
 // test encode function
 class TestEncode {
@@ -22,7 +23,7 @@ class TestEncode {
         )
         println(actual)
         println(expected)
-        assert(actual == expected)
+        assertEquals(expected, actual)
     }
 
     @Test
@@ -42,7 +43,7 @@ class TestEncode {
         )
         println(actual)
         println(expected)
-        assert(actual == expected)
+        assertEquals(expected, actual)
     }
 
     @Test
@@ -62,7 +63,7 @@ class TestEncode {
         )
         println(actual)
         println(expected)
-        assert(actual == expected)
+        assertEquals(expected, actual)
     }
 
     @Test
@@ -82,7 +83,7 @@ class TestEncode {
         )
         println(actual)
         println(expected)
-        assert(actual == expected)
+        assertEquals(expected, actual)
     }
 }
 
@@ -98,7 +99,7 @@ class TestGetJdn {
         val expected = 0b00100101_10000011_11110001UL // 2458609
         println(actual)
         println(expected)
-        assert(actual == expected)
+        assertEquals(expected, actual)
     }
 
     @Test
@@ -107,6 +108,6 @@ class TestGetJdn {
         val expected = 0UL
         println(actual)
         println(expected)
-        assert(actual == expected)
+        assertEquals(expected, actual)
     }
 }

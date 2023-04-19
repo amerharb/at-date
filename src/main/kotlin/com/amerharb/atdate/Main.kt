@@ -28,7 +28,7 @@ fun main(args: Array<String>) {
             println("Decoding...")
             val arrayOfBytes = getByteArrayFromHexString(arg1)
             val atDate = decode(arrayOfBytes)
-            println("Notation: 0x${atDate.getNotation()}")
+            println("Notation: ${atDate.getNotation()}")
         }
     }
 }

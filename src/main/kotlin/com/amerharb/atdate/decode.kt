@@ -47,8 +47,72 @@ fun decode(input: Array<UByte>): AtDate {
             )
 
         }
+        2 -> {
+            val h1 = headerList[0]
+            if (h1 and (0b0100_0000U).toUByte() != (0b0100_0000).toUByte()) throw Exception("Period is not supported yet")
+            val rangeLevel = when (h1 and 0b0011_0000U) {
+                (0b0000_0000).toUByte() -> RangeLevel.Level1
+                (0b0001_0000U).toUByte() -> RangeLevel.Level2
+                (0b0010_0000U).toUByte() -> RangeLevel.Level3
+                (0b0011_0000U).toUByte() -> RangeLevel.Level4
+                else -> throw Exception("Invalid input")
+            }
+            val resolutionLevel = when (h1 and 0b0000_1111U) {
+                (0b0000_0000U).toUByte() -> ResolutionLevel.Level0
+                (0b0000_0001U).toUByte() -> ResolutionLevel.Level1
+                (0b0000_0010U).toUByte() -> ResolutionLevel.Level2
+                (0b0000_0011U).toUByte() -> ResolutionLevel.Level3
+                (0b0000_0100U).toUByte() -> ResolutionLevel.Level4
+                (0b0000_0101U).toUByte() -> ResolutionLevel.Level5
+                (0b0000_0110U).toUByte() -> ResolutionLevel.Level6
+                (0b0000_0111U).toUByte() -> ResolutionLevel.Level7
+                (0b0000_1000U).toUByte() -> ResolutionLevel.Level8
+                (0b0000_1001U).toUByte() -> ResolutionLevel.Level9
+                (0b0000_1010U).toUByte() -> ResolutionLevel.Level10
+                (0b0000_1011U).toUByte() -> ResolutionLevel.Level11
+                (0b0000_1100U).toUByte() -> ResolutionLevel.Level12
+                (0b0000_1101U).toUByte() -> ResolutionLevel.Level13
+                (0b0000_1110U).toUByte() -> ResolutionLevel.Level14
+                (0b0000_1111U).toUByte() -> ResolutionLevel.Level15
+                else -> throw Exception("Invalid input")
+            }
+            val h2 = headerList[1]
+            val zoneLevel = when (h2 and 0b0111_0000U) {
+                (0b0000_0000U).toUByte() -> ZoneLevel.Level0
+                (0b0001_0000U).toUByte() -> ZoneLevel.Level1
+                (0b0010_0000U).toUByte() -> ZoneLevel.Level2
+                (0b0011_0000U).toUByte() -> ZoneLevel.Level3
+                (0b0100_0000U).toUByte() -> ZoneLevel.Level4
+                (0b0101_0000U).toUByte() -> ZoneLevel.Level5
+                (0b0110_0000U).toUByte() -> ZoneLevel.Level6
+                (0b0111_0000U).toUByte() -> ZoneLevel.Level7
+                else -> throw Exception("Invalid input")
+            }
+            val leapSecondsFlag = when (h2 and 0b0000_1100U) {
+                (0b0000_0000U).toUByte() -> (0U).toUByte()
+                (0b0000_0100U).toUByte() -> (1U).toUByte()
+                (0b0000_1000U).toUByte() -> (2U).toUByte()
+                (0b0000_1100U).toUByte() -> (3U).toUByte()
+                else -> throw Exception("Invalid input")
+            }
+            val accuracy = when (h2 and 0b0000_0011U) {
+                (0b0000_0000U).toUByte() -> Accuracy.Start
+                (0b0000_0001U).toUByte() -> Accuracy.Whole
+                (0b0000_0010U).toUByte() -> Accuracy.End
+                else -> throw Exception("Invalid input")
+            }
 
-        else -> throw Exception("2-bytes and 3 bytes headers are not supported yet")
+            AtDateHeader(
+                rangeLevel = rangeLevel,
+                resolutionLevel = resolutionLevel,
+                zoneLevel = zoneLevel,
+                accuracy = accuracy,
+                leapSecondsFlag = leapSecondsFlag
+            )
+
+        }
+
+        else -> throw Exception("3 bytes headers are not supported yet")
     }
 
     val bodyArray = bodyList.toTypedArray()
