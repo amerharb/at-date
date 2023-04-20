@@ -14,7 +14,7 @@ fun encode(input: String): Moment {
 
     val dValue = propArr.find { it.startsWith("d:") }?.substringAfter(":")
     val d = dValue?.toUByte()
-    val ProvidedRangeLevel = RangeLevel.values().find { it.no == d }
+    val providedRangeLevel = RangeLevel.values().find { it.no == d }
 
     val tValue = propArr.find { it.startsWith("t:") }?.substringAfter(":")
     val t = tValue?.toUByte() ?: 0U
@@ -47,7 +47,7 @@ fun encode(input: String): Moment {
     // TODO: fix the case where year is minus, then it will start with - and split wrong
     val (year, month, day) = datePart.split("-").map { it.toLong() }
     val jdn = getJdn(year, month, day)
-    val rangeLevel = ProvidedRangeLevel ?: getSuitableRangeLevel(jdn)
+    val rangeLevel = providedRangeLevel ?: getSuitableRangeLevel(jdn)
     val dateULong = when (rangeLevel) {
         RangeLevel.Level0 -> throw Exception("range level 0 only allowed with tp")
         RangeLevel.Level1 -> {
