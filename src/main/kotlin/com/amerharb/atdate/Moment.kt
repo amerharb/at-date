@@ -1,6 +1,6 @@
 package com.amerharb.atdate
 
-data class AtDate(
+data class Moment(
     // TODO: support period
     val rangeLevel: RangeLevel = RangeLevel.Level1,
     val resolutionLevel: ResolutionLevel = ResolutionLevel.Level0,

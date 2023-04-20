@@ -11,7 +11,7 @@ class TestDecode {
         // "@2019-05-05 {d:1}@"
         val input = ubyteArrayOf(0xC0U, 0x07U, 0xE2U).toTypedArray()
         val actual = decode(input)
-        val expected = AtDate(
+        val expected = Moment(
             rangeLevel = RangeLevel.Level1,
             resolutionLevel = ResolutionLevel.Level0,
             zoneLevel = ZoneLevel.Level0,
@@ -34,7 +34,7 @@ class TestDecode {
         // "@2019-05-05T19:53:00+02:00 {d:1, t:5, a:s, l:0-0, z:1}@"
         val input =  ubyteArrayOf(0xD6U, 0x07U, 0xE3U, 0x17U, 0x9CU, 0x10U).toTypedArray()
         val actual = decode(input)
-        val expected = AtDate(
+        val expected = Moment(
             rangeLevel = RangeLevel.Level1,
             resolutionLevel = ResolutionLevel.Level5,
             zoneLevel = ZoneLevel.Level1,

@@ -1,6 +1,6 @@
 package com.amerharb.atdate
 
-fun encode(input: String): AtDate {
+fun encode(input: String): Moment {
     // takes input like "@2019-01-01T00:00:00Z {d:1, r:0, a:s, l:0-0}@"
     // and returns an AtDate object
     val ad = input.trim().substringAfter("@").substringBefore("@").trim()
@@ -124,7 +124,7 @@ fun encode(input: String): AtDate {
         else -> Pair(providedZoneLevel ?: ZoneLevel.Level0, null)
     }
 
-    return AtDate(
+    return Moment(
         rangeLevel = rangeLevel,
         resolutionLevel = resolutionLevel,
         zoneLevel = zoneLevel,
