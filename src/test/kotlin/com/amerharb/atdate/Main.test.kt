@@ -42,6 +42,7 @@ class TestMain {
         System.setOut(originalOut)
     }
 
+    // Decoding Examples
     @Test
     fun testDecodeExample1() {
         val outContent = ByteArrayOutputStream()
