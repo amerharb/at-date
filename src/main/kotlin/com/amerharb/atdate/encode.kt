@@ -1,7 +1,8 @@
 package com.amerharb.atdate
 
 fun encode(input: String): Moment {
-    // takes input like "@2019-01-01T00:00:00Z {d:1, r:0, a:s, l:0-0}@"
+    // takes input like "@2019-01-01T00:00:00Z {d:1 t:5 z:1 a:s l:0-0}@"
+    // takes input like "@1979-11-14 {d:1 t:5 z:1 a:s l:0-0}@"
     // and returns an AtDate object
     val ad = input.trim().substringAfter("@").substringBefore("@").trim()
     val datetime = ad.substringBefore("{").trim()
@@ -12,8 +13,8 @@ fun encode(input: String): Moment {
     val propArr = prop.trim().split(" ").map { it.trim() }
 
     val dValue = propArr.find { it.startsWith("d:") }?.substringAfter(":")
-    val d = dValue?.toUByte() ?: 1U
-    val rangeLevel = RangeLevel.values().find { it.no == d } ?: throw Exception("Invalid date level")
+    val d = dValue?.toUByte()
+    val ProvidedRangeLevel = RangeLevel.values().find { it.no == d }
 
     val tValue = propArr.find { it.startsWith("t:") }?.substringAfter(":")
     val t = tValue?.toUByte() ?: 0U
@@ -43,16 +44,18 @@ fun encode(input: String): Moment {
     val z = zValue?.toUByte()
     val providedZoneLevel = ZoneLevel.values().find { it.no == z }
 
-    val (year, month, day) = datePart.split("-").map { it.toInt() }
+    // TODO: fix the case where year is minus, then it will start with - and split wrong
+    val (year, month, day) = datePart.split("-").map { it.toLong() }
     val jdn = getJdn(year, month, day)
+    val rangeLevel = ProvidedRangeLevel ?: getSuitableRangeLevel(jdn)
     val dateULong = when (rangeLevel) {
-        RangeLevel.Level0 -> TODO() // range level 0 only allowed with tp
+        RangeLevel.Level0 -> throw Exception("range level 0 only allowed with tp")
         RangeLevel.Level1 -> {
             // only most right 15 bits are used
-            jdn and 0b01111111_11111111UL
+            jdn.toULong() and 0b01111111_11111111UL
         }
 
-        RangeLevel.Level2 -> jdn
+        RangeLevel.Level2 -> jdn.toULong()
         RangeLevel.Level3 -> TODO()
         RangeLevel.Level4 -> TODO()
     }
@@ -138,9 +141,18 @@ fun encode(input: String): Moment {
     )
 }
 
-fun getJdn(year: Int, month: Int, day: Int): ULong {
+fun getJdn(year: Long, month: Long, day: Long): Long {
     val p1 = (1461 * (year + 4800 + (month - 14) / 12)) / 4
     val p2 = (367 * (month - 2 - 12 * ((month - 14) / 12))) / 12
     val p3 = -(3 * ((year + 4900 + (month - 14) / 12) / 100)) / 4 + day - 32075
-    return (p1 + p2 + p3).toULong()
+    return p1 + p2 + p3
+}
+
+fun getSuitableRangeLevel(jdn: Long): RangeLevel {
+    return when {
+        jdn in 0x258000..0x25FFFF -> RangeLevel.Level1
+        jdn in 0 .. 0x3FFFFF -> RangeLevel.Level2
+        jdn in -0x80000000 .. 0xFFFFFFFF -> RangeLevel.Level3
+        else -> RangeLevel.Level4
+    }
 }
