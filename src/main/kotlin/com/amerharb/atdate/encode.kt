@@ -70,34 +70,34 @@ fun encode(input: String): Moment {
     }
 
     val (resolutionLevel, timeULong) = if (timePart.trim() != "") {
-        val (hour, minute, second) = destructTimePart(timePart)
-        val rlevel = providedResolutionLevel ?: getSuitableResolutionLevel(second)
+        val (hour, min, sec) = destructTimePart(timePart)
+        val rlevel = providedResolutionLevel ?: getSuitableResolutionLevel(sec)
 
         when (rlevel) {
             ResolutionLevel.Level0 -> Pair(rlevel, null)
             ResolutionLevel.Level1 -> Pair(rlevel, hour)
-            ResolutionLevel.Level2 -> Pair(rlevel, hour * 4UL + minute / 15UL) // count every 15 minutes
-            ResolutionLevel.Level3 -> Pair(rlevel, hour * 12UL + minute / 5UL) // count every 5 minutes
-            ResolutionLevel.Level4 -> Pair(rlevel, hour * 60UL + minute) // count minutes
-            ResolutionLevel.Level5 -> Pair(rlevel, hour * 3600UL + minute * 60UL + second.toULong())// count seconds
+            ResolutionLevel.Level2 -> Pair(rlevel, hour * 4UL + min / 15UL) // count every 15 minutes
+            ResolutionLevel.Level3 -> Pair(rlevel, hour * 12UL + min / 5UL) // count every 5 minutes
+            ResolutionLevel.Level4 -> Pair(rlevel, hour * 60UL + min) // count minutes
+            ResolutionLevel.Level5 -> Pair(rlevel, hour * 3600UL + min * 60UL + sec.toULong())// count seconds
             ResolutionLevel.Level6 -> Pair(
                 rlevel,
-                hour * 3600_000UL + minute * 60_000UL + (second * 1000).toULong()
+                hour * 3600_000UL + min * 60_000UL + (sec * 1000).toULong()
             ) // count milliseconds
             ResolutionLevel.Level7 -> Pair(
                 rlevel,
-                hour * 3600_000_000UL + minute * 60_000_000UL + (second * 1000_000).toULong()
+                hour * 3600_000_000UL + min * 60_000_000UL + (sec * 1000_000).toULong()
             ) // count microseconds
             ResolutionLevel.Level8 -> {
                 // count nanoseconds
-                Pair(rlevel, hour * 3600_000_000_000UL + minute * 60_000_000_000UL + (second * 1000_000_000).toULong())
+                Pair(rlevel, hour * 3600_000_000_000UL + min * 60_000_000_000UL + (sec * 1000_000_000).toULong())
             }
 
             ResolutionLevel.Level9 -> {
                 // count picoseconds
                 Pair(
                     rlevel,
-                    hour * 3600_000_000_000_000UL + minute * 60_000_000_000_000UL + (second * 1000_000_000_000).toULong()
+                    hour * 3600_000_000_000_000UL + min * 60_000_000_000_000UL + (sec * 1000_000_000_000).toULong()
                 )
             }
             // from Level10 ULong is not enough, go be support later with more than 1 variable
@@ -167,7 +167,7 @@ private fun getSuitableRangeLevel(jdn: Long): RangeLevel {
 }
 
 private fun getSuitableResolutionLevel(seconds: Double): ResolutionLevel =
-    ResolutionLevel.values().find { it.no == (countDigitsAfterDecimal(seconds) % 3 + 5).toUByte() }
+    ResolutionLevel.values().find { it.no == (countDigitsAfterDecimal(seconds) / 3 + 5).toUByte() }
         ?: throw Exception("Can't find suitable resolution level for $seconds")
 
 

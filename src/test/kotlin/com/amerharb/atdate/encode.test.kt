@@ -85,6 +85,26 @@ class TestEncode {
         println(expected)
         assertEquals(expected, actual)
     }
+
+    @Test
+    fun findResolutionLevel8() {
+        val input = "@1979-11-14T00:00:00.123456789+02:00@"
+        val expected = Moment(
+            rangeLevel = RangeLevel.Level2,
+            resolutionLevel = ResolutionLevel.Level8,
+            zoneLevel = ZoneLevel.Level1,
+            accuracy = Accuracy.Start,
+            date = 2444192UL,
+            time = 123456789UL,
+            zone = 0b1000U,
+            plusLeapSeconds = null,
+            minusLeapSeconds = null,
+        )
+        val actual = encode(input)
+        println(actual)
+        println(expected)
+        assertEquals(expected, actual)
+    }
 }
 
 /**
