@@ -61,6 +61,23 @@ class TestMain {
     }
 
     @Test
+    fun testDecodeExample2() {
+        val outContent = ByteArrayOutputStream()
+        val originalOut = System.out
+        System.setOut(PrintStream(outContent))
+        val input = "0xD607E3179C10"
+        main(arrayOf(input))
+        val actual = outContent.toString().replace("\r\n", "\n")
+        val expected = """|@Date
+                          |input: $input
+                          |Decoding...
+                          |Notation: @2019-05-05T19:53:00+02:00 { d:1 t:5 z:1 a:s l:0-0 }@
+                          |""".trimMargin("|")
+        assertEquals(expected, actual)
+        System.setOut(originalOut)
+    }
+
+    @Test
     fun testDecodeExample3() {
         val outContent = ByteArrayOutputStream()
         val originalOut = System.out
