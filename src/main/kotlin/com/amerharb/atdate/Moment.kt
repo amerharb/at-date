@@ -1,7 +1,6 @@
 package com.amerharb.atdate
 
 data class Moment(
-    // TODO: support period
     val rangeLevel: RangeLevel = RangeLevel.Level1,
     val resolutionLevel: ResolutionLevel = ResolutionLevel.Level0,
     val zoneLevel: ZoneLevel = ZoneLevel.Level0,
@@ -291,10 +290,10 @@ enum class ResolutionLevel(val no: UByte) {
     Level2(2U),
     Level3(3U),
     Level4(4U),
-    Level5(5U),
-    Level6(6U),
-    Level7(7U),
-    Level8(8U),
+    Level5(5U), // Seconds
+    Level6(6U), // Milliseconds
+    Level7(7U), // Microseconds
+    Level8(8U), // Nanoseconds
     Level9(9U),
     Level10(10U),
     Level11(11U),
