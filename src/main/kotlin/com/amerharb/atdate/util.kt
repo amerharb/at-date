@@ -40,15 +40,15 @@ fun getZoneBitCount(zoneLevel: ZoneLevel): Int {
     return when (zoneLevel) {
         ZoneLevel.Level0 -> 0
         ZoneLevel.Level1 -> 7
-        ZoneLevel.Level2 -> 11
-        ZoneLevel.Level3 -> 27
-        ZoneLevel.Level4 -> 47
-        ZoneLevel.Level5 -> 67
-        ZoneLevel.Level6 -> 87
-        ZoneLevel.Level7 -> 107
-        ZoneLevel.Level8 -> 127
-        ZoneLevel.Level9 -> 146
-        ZoneLevel.Level10 -> TODO()
+        ZoneLevel.Level2 -> getResolutionBitCount(ResolutionLevel.Level4) + 1
+        ZoneLevel.Level3 -> getResolutionBitCount(ResolutionLevel.Level6) + 1
+        ZoneLevel.Level4 -> getResolutionBitCount(ResolutionLevel.Level8) + 1
+        ZoneLevel.Level5 -> getResolutionBitCount(ResolutionLevel.Level10) + 1
+        ZoneLevel.Level6 -> getResolutionBitCount(ResolutionLevel.Level12) + 1
+        ZoneLevel.Level7 -> getResolutionBitCount(ResolutionLevel.Level14) + 1
+        ZoneLevel.Level8 -> getResolutionBitCount(ResolutionLevel.Level16) + 1
+        ZoneLevel.Level9 -> getResolutionBitCount(ResolutionLevel.Level18) + 1
+        ZoneLevel.Level10 -> getResolutionBitCount(ResolutionLevel.Level20) + 1
     }
 }
 

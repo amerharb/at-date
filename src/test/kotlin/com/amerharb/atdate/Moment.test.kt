@@ -2,11 +2,11 @@ package com.amerharb.atdate
 
 import kotlin.test.Test
 
-class TestAtDate {
+class TestMoment {
     @Test
     @OptIn(ExperimentalUnsignedTypes::class)
     fun testGetPayloadExample1() {
-        val example1 = AtDate(
+        val example1 = Moment(
             rangeLevel = RangeLevel.Level1,
             resolutionLevel = ResolutionLevel.Level0,
             zoneLevel = ZoneLevel.Level0,
@@ -28,7 +28,7 @@ class TestAtDate {
     @Test
     @OptIn(ExperimentalUnsignedTypes::class)
     fun testGetPayloadExample2() {
-        val example2 = AtDate(
+        val example2 = Moment(
             rangeLevel = RangeLevel.Level1,
             resolutionLevel = ResolutionLevel.Level5,
             zoneLevel = ZoneLevel.Level1,
@@ -50,7 +50,7 @@ class TestAtDate {
     @Test
     @OptIn(ExperimentalUnsignedTypes::class)
     fun testGetNotationExample1() {
-        val example1 = AtDate(
+        val example1 = Moment(
             rangeLevel = RangeLevel.Level1,
             resolutionLevel = ResolutionLevel.Level0,
             zoneLevel = ZoneLevel.Level0,
@@ -71,7 +71,7 @@ class TestAtDate {
     @Test
     @OptIn(ExperimentalUnsignedTypes::class)
     fun testGetNotationExample2() {
-        val example2 = AtDate(
+        val example2 = Moment(
             rangeLevel = RangeLevel.Level1,
             resolutionLevel = ResolutionLevel.Level5,
             zoneLevel = ZoneLevel.Level1,

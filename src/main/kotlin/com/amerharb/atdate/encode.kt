@@ -1,7 +1,8 @@
 package com.amerharb.atdate
 
-fun encode(input: String): AtDate {
-    // takes input like "@2019-01-01T00:00:00Z {d:1, r:0, a:s, l:0-0}@"
+fun encode(input: String): Moment {
+    // takes input like "@2019-01-01T00:00:00Z {d:1 t:5 z:1 a:s l:0-0}@"
+    // takes input like "@1979-11-14 {d:1 t:5 z:1 a:s l:0-0}@"
     // and returns an AtDate object
     val ad = input.trim().substringAfter("@").substringBefore("@").trim()
     val datetime = ad.substringBefore("{").trim()
@@ -12,12 +13,12 @@ fun encode(input: String): AtDate {
     val propArr = prop.trim().split(" ").map { it.trim() }
 
     val dValue = propArr.find { it.startsWith("d:") }?.substringAfter(":")
-    val d = dValue?.toUByte() ?: 1U
-    val rangeLevel = RangeLevel.values().find { it.no == d } ?: throw Exception("Invalid date level")
+    val d = dValue?.toUByte()
+    val providedRangeLevel = RangeLevel.values().find { it.no == d }
 
     val tValue = propArr.find { it.startsWith("t:") }?.substringAfter(":")
-    val t = tValue?.toUByte() ?: 0U
-    val resolutionLevel = ResolutionLevel.values().find { it.no == t } ?: throw Exception("Invalid resolution level")
+    val t = tValue?.toUByte()
+    val providedResolutionLevel = ResolutionLevel.values().find { it.no == t }
 
     val aValue = propArr.find { it.startsWith("a:") }?.substringAfter(":")?.firstOrNull() ?: 's'
     val accuracy = Accuracy.values().find { it.letter == aValue } ?: throw Exception("Invalid accuracy level")
@@ -43,16 +44,18 @@ fun encode(input: String): AtDate {
     val z = zValue?.toUByte()
     val providedZoneLevel = ZoneLevel.values().find { it.no == z }
 
-    val (year, month, day) = datePart.split("-").map { it.toInt() }
+    // TODO: fix the case where year is minus, then it will start with - and split wrong
+    val (year, month, day) = datePart.split("-").map { it.toLong() }
     val jdn = getJdn(year, month, day)
+    val rangeLevel = providedRangeLevel ?: getSuitableRangeLevel(jdn)
     val dateULong = when (rangeLevel) {
-        RangeLevel.Level0 -> TODO() // range level 0 only allowed with tp
+        RangeLevel.Level0 -> throw Exception("range level 0 only allowed with tp")
         RangeLevel.Level1 -> {
             // only most right 15 bits are used
-            jdn and 0b01111111_11111111UL
+            jdn.toULong() and 0b01111111_11111111UL
         }
 
-        RangeLevel.Level2 -> jdn
+        RangeLevel.Level2 -> jdn.toULong()
         RangeLevel.Level3 -> TODO()
         RangeLevel.Level4 -> TODO()
     }
@@ -65,28 +68,37 @@ fun encode(input: String): AtDate {
         timezonePart.contains("@") -> timezonePart.substringBeforeLast("@").trim()
         else -> timezonePart.substringAfter("T").trim()
     }
-    val timeULong = if (timePart.trim() != "") {
-        val timeArray = timePart.split(":")
-        val hour = timeArray[0].toULong()
-        val minute = timeArray[1].toULong()
-        val second = timeArray[2].toDouble()
-        when (resolutionLevel) {
-            ResolutionLevel.Level0 -> null
-            ResolutionLevel.Level1 -> hour
-            ResolutionLevel.Level2 -> hour * 4UL + minute / 15UL // count every 15 minutes
-            ResolutionLevel.Level3 -> hour * 12UL + minute / 5UL // count every 5 minutes
-            ResolutionLevel.Level4 -> hour * 60UL + minute // count minutes
-            ResolutionLevel.Level5 -> hour * 3600UL + minute * 60UL + second.toULong() // count seconds
-            ResolutionLevel.Level6 -> hour * 3600_000UL + minute * 60_000UL + (second * 1000).toULong() // count milliseconds
-            ResolutionLevel.Level7 -> hour * 3600_000_000UL + minute * 60_000_000UL + (second * 1000_000).toULong() // count microseconds
+
+    val (resolutionLevel, timeULong) = if (timePart.trim() != "") {
+        val (hour, min, sec) = destructTimePart(timePart)
+        val rlevel = providedResolutionLevel ?: getSuitableResolutionLevel(sec)
+
+        when (rlevel) {
+            ResolutionLevel.Level0 -> Pair(rlevel, null)
+            ResolutionLevel.Level1 -> Pair(rlevel, hour)
+            ResolutionLevel.Level2 -> Pair(rlevel, hour * 4UL + min / 15UL) // count every 15 minutes
+            ResolutionLevel.Level3 -> Pair(rlevel, hour * 12UL + min / 5UL) // count every 5 minutes
+            ResolutionLevel.Level4 -> Pair(rlevel, hour * 60UL + min) // count minutes
+            ResolutionLevel.Level5 -> Pair(rlevel, hour * 3600UL + min * 60UL + sec.toULong())// count seconds
+            ResolutionLevel.Level6 -> Pair(
+                rlevel,
+                hour * 3600_000UL + min * 60_000UL + (sec * 1000).toULong()
+            ) // count milliseconds
+            ResolutionLevel.Level7 -> Pair(
+                rlevel,
+                hour * 3600_000_000UL + min * 60_000_000UL + (sec * 1000_000).toULong()
+            ) // count microseconds
             ResolutionLevel.Level8 -> {
                 // count nanoseconds
-                hour * 3600_000_000_000UL + minute * 60_000_000_000UL + (second * 1000_000_000).toULong()
+                Pair(rlevel, hour * 3600_000_000_000UL + min * 60_000_000_000UL + (sec * 1000_000_000).toULong())
             }
 
             ResolutionLevel.Level9 -> {
                 // count picoseconds
-                hour * 3600_000_000_000_000UL + minute * 60_000_000_000_000UL + (second * 1000_000_000_000).toULong()
+                Pair(
+                    rlevel,
+                    hour * 3600_000_000_000_000UL + min * 60_000_000_000_000UL + (sec * 1000_000_000_000).toULong()
+                )
             }
             // from Level10 ULong is not enough, go be support later with more than 1 variable
             ResolutionLevel.Level10 -> TODO()
@@ -102,10 +114,10 @@ fun encode(input: String): AtDate {
             ResolutionLevel.Level20 -> TODO()
         }
     } else {
-        null
+        Pair(ResolutionLevel.Level0, null)
     }
-    // read offset part of iso format
 
+    // read offset part of iso format
     val (zoneLevel, zoneULong) = when {
         timezonePart.endsWith("Z") -> Pair(providedZoneLevel ?: ZoneLevel.Level1, 0UL)
         timezonePart.contains("+") -> {
@@ -124,7 +136,7 @@ fun encode(input: String): AtDate {
         else -> Pair(providedZoneLevel ?: ZoneLevel.Level0, null)
     }
 
-    return AtDate(
+    return Moment(
         rangeLevel = rangeLevel,
         resolutionLevel = resolutionLevel,
         zoneLevel = zoneLevel,
@@ -138,9 +150,45 @@ fun encode(input: String): AtDate {
     )
 }
 
-fun getJdn(year: Int, month: Int, day: Int): ULong {
+fun getJdn(year: Long, month: Long, day: Long): Long {
     val p1 = (1461 * (year + 4800 + (month - 14) / 12)) / 4
     val p2 = (367 * (month - 2 - 12 * ((month - 14) / 12))) / 12
     val p3 = -(3 * ((year + 4900 + (month - 14) / 12) / 100)) / 4 + day - 32075
-    return (p1 + p2 + p3).toULong()
+    return p1 + p2 + p3
+}
+
+private fun getSuitableRangeLevel(jdn: Long): RangeLevel {
+    return when {
+        jdn in 0x258000..0x25FFFF -> RangeLevel.Level1
+        jdn in 0..0x3FFFFF -> RangeLevel.Level2
+        jdn in -0x80000000..0xFFFFFFFF -> RangeLevel.Level3
+        else -> RangeLevel.Level4
+    }
+}
+
+private fun getSuitableResolutionLevel(seconds: Double): ResolutionLevel =
+    ResolutionLevel.values().find { it.no == (countDigitsAfterDecimal(seconds) / 3 + 5).toUByte() }
+        ?: throw Exception("Can't find suitable resolution level for $seconds")
+
+
+private fun countDigitsAfterDecimal(num: Double): Int {
+    val numAsString = num.toString()
+    val decimalPointIndex = numAsString.indexOf('.')
+
+    return if (decimalPointIndex != -1) {
+        // Removing trailing zeros
+        val stringWithoutTrailingZeros = numAsString.trimEnd('0')
+
+        stringWithoutTrailingZeros.length - decimalPointIndex - 1
+    } else {
+        0
+    }
+}
+
+private fun destructTimePart(timePart: String): Triple<ULong, ULong, Double> {
+    val (h, m, s) = timePart.split(":")
+    val hour = h.toULong()
+    val minute = m.toULong()
+    val second = s.toDouble()
+    return Triple(hour, minute, second)
 }

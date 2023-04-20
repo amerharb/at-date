@@ -1,6 +1,6 @@
 package com.amerharb.atdate
 
-fun decode(input: Array<UByte>): AtDate {
+fun decode(input: Array<UByte>): Moment {
     // takes input array of UByte then returns an AtDate object
     val headerList = mutableListOf<UByte>()
     val bodyList = mutableListOf<UByte>()
@@ -143,7 +143,7 @@ fun decode(input: Array<UByte>): AtDate {
     pointer += leapLength
 
 
-    return AtDate(
+    return Moment(
         rangeLevel = atDateHeader.rangeLevel,
         resolutionLevel = atDateHeader.resolutionLevel,
         zoneLevel = atDateHeader.zoneLevel,
