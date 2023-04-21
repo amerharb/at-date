@@ -68,59 +68,59 @@ fun encodeMoment(input: String): Moment {
 
     val (resolutionLevel, timeULong) = if (timePart.trim() != "") {
         val (hour, min, sec, secFraction, precision) = destructTimePart(timePart)
-        val rlevel = providedResolutionLevel ?: getSuitableResolutionLevel(precision)
+        val rLevel = providedResolutionLevel ?: getSuitableResolutionLevel(precision)
 
-        when (rlevel) {
-            ResolutionLevel.Level0 -> Pair(rlevel, null)
-            ResolutionLevel.Level1 -> Pair(rlevel, hour)
-            ResolutionLevel.Level2 -> Pair(rlevel, (hour * 4UL) + (min / 15UL)) // count every 15 minutes
-            ResolutionLevel.Level3 -> Pair(rlevel, (hour * 12UL) + (min / 5UL)) // count every 5 minutes
-            ResolutionLevel.Level4 -> Pair(rlevel, (hour * 60UL) + min) // count minutes
-            ResolutionLevel.Level5 -> Pair(rlevel, (hour * 3600UL) + (min * 60UL) + sec) // count seconds
+        when (rLevel) {
+            ResolutionLevel.Level0 -> Pair(rLevel, null)
+            ResolutionLevel.Level1 -> Pair(rLevel, hour)
+            ResolutionLevel.Level2 -> Pair(rLevel, (hour * 4UL) + (min / 15UL)) // count every 15 minutes
+            ResolutionLevel.Level3 -> Pair(rLevel, (hour * 12UL) + (min / 5UL)) // count every 5 minutes
+            ResolutionLevel.Level4 -> Pair(rLevel, (hour * 60UL) + min) // count minutes
+            ResolutionLevel.Level5 -> Pair(rLevel, (hour * 3600UL) + (min * 60UL) + sec) // count seconds
             ResolutionLevel.Level6 -> Pair(
-                rlevel, (hour * 3600_000UL) + (min * 60_000UL) + (sec * 1000UL)
-                        + secFraction.adaptFraction(rlevel, precision)
+                rLevel, (hour * 3600_000UL) + (min * 60_000UL) + (sec * 1000UL)
+                        + secFraction.adaptFraction(rLevel, precision)
             ) // count milliseconds
 
             ResolutionLevel.Level7 -> Pair(
-                rlevel, (hour * 3600_000_000UL) + (min * 60_000_000UL) + (sec * 1000_000UL)
-                        + secFraction.adaptFraction(rlevel, precision)
+                rLevel, (hour * 3600_000_000UL) + (min * 60_000_000UL) + (sec * 1000_000UL)
+                        + secFraction.adaptFraction(rLevel, precision)
             ) // count microseconds
 
             ResolutionLevel.Level8 -> Pair(
-                rlevel,
+                rLevel,
                 (hour * 3600_000_000_000UL) + (min * 60_000_000_000UL) + (sec * 1000_000_000UL)
-                        + secFraction.adaptFraction(rlevel, precision)
+                        + secFraction.adaptFraction(rLevel, precision)
             ) // count nanoseconds
 
             ResolutionLevel.Level9 -> {
                 Pair(
-                    rlevel,
+                    rLevel,
                     (hour * 3600_000_000_000_000UL) + (min * 60_000_000_000_000UL) + (sec * 1000_000_000_000UL)
-                            + secFraction.adaptFraction(rlevel, precision)
+                            + secFraction.adaptFraction(rLevel, precision)
                 ) // count picoseconds
             }
 
             ResolutionLevel.Level10 -> {
                 Pair(
-                    rlevel,
+                    rLevel,
                     (hour * 3600_000_000_000_000_000UL) + (min * 60_000_000_000_000_000UL)
-                            + (sec * 1000_000_000_000_000UL) + secFraction.adaptFraction(rlevel, precision)
+                            + (sec * 1000_000_000_000_000UL) + secFraction.adaptFraction(rLevel, precision)
                 ) // count femtoseconds
             }
 
             // from Level10 ULong is not enough, go be support later with more than 1 variable
 //            ResolutionLevel.Level10 -> throw Exception("Time resolution $rlevel is not supported yet") // TODO:
-            ResolutionLevel.Level11 -> throw Exception("Time resolution $rlevel is not supported yet") // TODO:
-            ResolutionLevel.Level12 -> throw Exception("Time resolution $rlevel is not supported yet") // TODO:
-            ResolutionLevel.Level13 -> throw Exception("Time resolution $rlevel is not supported yet") // TODO:
-            ResolutionLevel.Level14 -> throw Exception("Time resolution $rlevel is not supported yet") // TODO:
-            ResolutionLevel.Level15 -> throw Exception("Time resolution $rlevel is not supported yet") // TODO:
-            ResolutionLevel.Level16 -> throw Exception("Time resolution $rlevel is not supported yet") // TODO:
-            ResolutionLevel.Level17 -> throw Exception("Time resolution $rlevel is not supported yet") // TODO:
-            ResolutionLevel.Level18 -> throw Exception("Time resolution $rlevel is not supported yet") // TODO:
-            ResolutionLevel.Level19 -> throw Exception("Time resolution $rlevel is not supported yet") // TODO:
-            ResolutionLevel.Level20 -> throw Exception("Time resolution $rlevel is not supported yet") // TODO:
+            ResolutionLevel.Level11 -> throw Exception("Time resolution $rLevel is not supported yet") // TODO:
+            ResolutionLevel.Level12 -> throw Exception("Time resolution $rLevel is not supported yet") // TODO:
+            ResolutionLevel.Level13 -> throw Exception("Time resolution $rLevel is not supported yet") // TODO:
+            ResolutionLevel.Level14 -> throw Exception("Time resolution $rLevel is not supported yet") // TODO:
+            ResolutionLevel.Level15 -> throw Exception("Time resolution $rLevel is not supported yet") // TODO:
+            ResolutionLevel.Level16 -> throw Exception("Time resolution $rLevel is not supported yet") // TODO:
+            ResolutionLevel.Level17 -> throw Exception("Time resolution $rLevel is not supported yet") // TODO:
+            ResolutionLevel.Level18 -> throw Exception("Time resolution $rLevel is not supported yet") // TODO:
+            ResolutionLevel.Level19 -> throw Exception("Time resolution $rLevel is not supported yet") // TODO:
+            ResolutionLevel.Level20 -> throw Exception("Time resolution $rLevel is not supported yet") // TODO:
         }
     } else {
         Pair(ResolutionLevel.Level0, null)
@@ -213,4 +213,3 @@ fun ULong.pow(exponent: UByte): ULong {
 
 fun ULong.adaptFraction(resolutionLevel: ResolutionLevel, precision: UByte): ULong =
     this * 1000UL.pow((resolutionLevel.no - 5U - precision).toUByte())
-
