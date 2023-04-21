@@ -1,6 +1,6 @@
 package com.amerharb.atdate
 
-fun encode(input: String): Moment {
+fun encodeMoment(input: String): Moment {
     // takes input like "@2019-01-01T00:00:00Z {d:1 t:5 z:1 a:s l:0-0}@"
     // takes input like "@1979-11-14 {d:1 t:5 z:1 a:s l:0-0}@"
     // and returns an AtDate object
@@ -13,12 +13,10 @@ fun encode(input: String): Moment {
     val propArr = prop.trim().split(" ").map { it.trim() }
 
     val dValue = propArr.find { it.startsWith("d:") }?.substringAfter(":")
-    val d = dValue?.toUByte()
-    val providedRangeLevel = RangeLevel.values().find { it.no == d }
+    val providedRangeLevel = RangeLevel.values().find { it.no == dValue?.toUByte() }
 
     val tValue = propArr.find { it.startsWith("t:") }?.substringAfter(":")
-    val t = tValue?.toUByte()
-    val providedResolutionLevel = ResolutionLevel.values().find { it.no == t }
+    val providedResolutionLevel = ResolutionLevel.values().find { it.no == tValue?.toUByte() }
 
     val aValue = propArr.find { it.startsWith("a:") }?.substringAfter(":")?.firstOrNull() ?: 's'
     val accuracy = Accuracy.values().find { it.letter == aValue } ?: throw Exception("Invalid accuracy level")
@@ -41,8 +39,7 @@ fun encode(input: String): Moment {
     }
 
     val zValue = propArr.find { it.startsWith("z:") }?.substringAfter(":")
-    val z = zValue?.toUByte()
-    val providedZoneLevel = ZoneLevel.values().find { it.no == z }
+    val providedZoneLevel = ZoneLevel.values().find { it.no == zValue?.toUByte() }
 
     // TODO: fix the case where year is minus, then it will start with - and split wrong
     val (year, month, day) = datePart.split("-").map { it.toLong() }
@@ -70,48 +67,60 @@ fun encode(input: String): Moment {
     }
 
     val (resolutionLevel, timeULong) = if (timePart.trim() != "") {
-        val (hour, min, sec) = destructTimePart(timePart)
-        val rlevel = providedResolutionLevel ?: getSuitableResolutionLevel(sec)
+        val (hour, min, sec, secFraction, precision) = destructTimePart(timePart)
+        val rLevel = providedResolutionLevel ?: getSuitableResolutionLevel(precision)
 
-        when (rlevel) {
-            ResolutionLevel.Level0 -> Pair(rlevel, null)
-            ResolutionLevel.Level1 -> Pair(rlevel, hour)
-            ResolutionLevel.Level2 -> Pair(rlevel, hour * 4UL + min / 15UL) // count every 15 minutes
-            ResolutionLevel.Level3 -> Pair(rlevel, hour * 12UL + min / 5UL) // count every 5 minutes
-            ResolutionLevel.Level4 -> Pair(rlevel, hour * 60UL + min) // count minutes
-            ResolutionLevel.Level5 -> Pair(rlevel, hour * 3600UL + min * 60UL + sec.toULong())// count seconds
+        when (rLevel) {
+            ResolutionLevel.Level0 -> Pair(rLevel, null)
+            ResolutionLevel.Level1 -> Pair(rLevel, hour)
+            ResolutionLevel.Level2 -> Pair(rLevel, (hour * 4UL) + (min / 15UL)) // count every 15 minutes
+            ResolutionLevel.Level3 -> Pair(rLevel, (hour * 12UL) + (min / 5UL)) // count every 5 minutes
+            ResolutionLevel.Level4 -> Pair(rLevel, (hour * 60UL) + min) // count minutes
+            ResolutionLevel.Level5 -> Pair(rLevel, (hour * 3600UL) + (min * 60UL) + sec) // count seconds
             ResolutionLevel.Level6 -> Pair(
-                rlevel,
-                hour * 3600_000UL + min * 60_000UL + (sec * 1000).toULong()
+                rLevel, (hour * 3600_000UL) + (min * 60_000UL) + (sec * 1000UL)
+                        + secFraction.adaptFraction(rLevel, precision)
             ) // count milliseconds
+
             ResolutionLevel.Level7 -> Pair(
-                rlevel,
-                hour * 3600_000_000UL + min * 60_000_000UL + (sec * 1000_000).toULong()
+                rLevel, (hour * 3600_000_000UL) + (min * 60_000_000UL) + (sec * 1000_000UL)
+                        + secFraction.adaptFraction(rLevel, precision)
             ) // count microseconds
-            ResolutionLevel.Level8 -> {
-                // count nanoseconds
-                Pair(rlevel, hour * 3600_000_000_000UL + min * 60_000_000_000UL + (sec * 1000_000_000).toULong())
-            }
+
+            ResolutionLevel.Level8 -> Pair(
+                rLevel,
+                (hour * 3600_000_000_000UL) + (min * 60_000_000_000UL) + (sec * 1000_000_000UL)
+                        + secFraction.adaptFraction(rLevel, precision)
+            ) // count nanoseconds
 
             ResolutionLevel.Level9 -> {
-                // count picoseconds
                 Pair(
-                    rlevel,
-                    hour * 3600_000_000_000_000UL + min * 60_000_000_000_000UL + (sec * 1000_000_000_000).toULong()
-                )
+                    rLevel,
+                    (hour * 3600_000_000_000_000UL) + (min * 60_000_000_000_000UL) + (sec * 1000_000_000_000UL)
+                            + secFraction.adaptFraction(rLevel, precision)
+                ) // count picoseconds
             }
+
+            ResolutionLevel.Level10 -> {
+                Pair(
+                    rLevel,
+                    (hour * 3600_000_000_000_000_000UL) + (min * 60_000_000_000_000_000UL)
+                            + (sec * 1000_000_000_000_000UL) + secFraction.adaptFraction(rLevel, precision)
+                ) // count femtoseconds
+            }
+
             // from Level10 ULong is not enough, go be support later with more than 1 variable
-            ResolutionLevel.Level10 -> TODO()
-            ResolutionLevel.Level11 -> TODO()
-            ResolutionLevel.Level12 -> TODO()
-            ResolutionLevel.Level13 -> TODO()
-            ResolutionLevel.Level14 -> TODO()
-            ResolutionLevel.Level15 -> TODO()
-            ResolutionLevel.Level16 -> TODO()
-            ResolutionLevel.Level17 -> TODO()
-            ResolutionLevel.Level18 -> TODO()
-            ResolutionLevel.Level19 -> TODO()
-            ResolutionLevel.Level20 -> TODO()
+//            ResolutionLevel.Level10 -> throw Exception("Time resolution $rlevel is not supported yet") // TODO:
+            ResolutionLevel.Level11 -> throw Exception("Time resolution $rLevel is not supported yet") // TODO:
+            ResolutionLevel.Level12 -> throw Exception("Time resolution $rLevel is not supported yet") // TODO:
+            ResolutionLevel.Level13 -> throw Exception("Time resolution $rLevel is not supported yet") // TODO:
+            ResolutionLevel.Level14 -> throw Exception("Time resolution $rLevel is not supported yet") // TODO:
+            ResolutionLevel.Level15 -> throw Exception("Time resolution $rLevel is not supported yet") // TODO:
+            ResolutionLevel.Level16 -> throw Exception("Time resolution $rLevel is not supported yet") // TODO:
+            ResolutionLevel.Level17 -> throw Exception("Time resolution $rLevel is not supported yet") // TODO:
+            ResolutionLevel.Level18 -> throw Exception("Time resolution $rLevel is not supported yet") // TODO:
+            ResolutionLevel.Level19 -> throw Exception("Time resolution $rLevel is not supported yet") // TODO:
+            ResolutionLevel.Level20 -> throw Exception("Time resolution $rLevel is not supported yet") // TODO:
         }
     } else {
         Pair(ResolutionLevel.Level0, null)
@@ -166,29 +175,41 @@ private fun getSuitableRangeLevel(jdn: Long): RangeLevel {
     }
 }
 
-private fun getSuitableResolutionLevel(seconds: Double): ResolutionLevel =
-    ResolutionLevel.values().find { it.no == (countDigitsAfterDecimal(seconds) / 3 + 5).toUByte() }
-        ?: throw Exception("Can't find suitable resolution level for $seconds")
+private fun getSuitableResolutionLevel(precision: UByte): ResolutionLevel =
+    ResolutionLevel.values().find { it.no == (precision + 5U).toUByte() }
+        ?: throw Exception("Can't find suitable resolution level for precision $precision")
 
-
-private fun countDigitsAfterDecimal(num: Double): Int {
-    val numAsString = num.toString()
-    val decimalPointIndex = numAsString.indexOf('.')
-
-    return if (decimalPointIndex != -1) {
-        // Removing trailing zeros
-        val stringWithoutTrailingZeros = numAsString.trimEnd('0')
-
-        stringWithoutTrailingZeros.length - decimalPointIndex - 1
-    } else {
-        0
-    }
-}
-
-private fun destructTimePart(timePart: String): Triple<ULong, ULong, Double> {
+private fun destructTimePart(timePart: String): TimeParts {
     val (h, m, s) = timePart.split(":")
     val hour = h.toULong()
     val minute = m.toULong()
-    val second = s.toDouble()
-    return Triple(hour, minute, second)
+    val secondArr = s.split(".")
+    val second = secondArr.first().toULong()
+    val secondFractionString = if (secondArr.size > 1) secondArr[1].trimEnd('0') else ""
+    val precision = if (secondFractionString.length % 3 == 0) {
+        (secondFractionString.length / 3).toUByte()
+    } else {
+        (secondFractionString.length / 3 + 1).toUByte()
+    }
+    val secondFraction = if (secondFractionString.isBlank()) 0UL else secondFractionString.toULong()
+    return TimeParts(hour, minute, second, secondFraction, precision)
 }
+
+data class TimeParts(
+    val hour: ULong,
+    val minute: ULong,
+    val second: ULong,
+    val secondFraction: ULong,
+    val precision: UByte, // 0-second, 1-millisecond, 2-microsecond, 3-nanosecond, 4-picosecond
+)
+
+fun ULong.pow(exponent: UByte): ULong {
+    var result = 1UL
+    repeat(exponent.toInt()) {
+        result *= this
+    }
+    return result
+}
+
+fun ULong.adaptFraction(resolutionLevel: ResolutionLevel, precision: UByte): ULong =
+    this * 1000UL.pow((resolutionLevel.no - 5U - precision).toUByte())

@@ -4,81 +4,86 @@ fun main(args: Array<String>) {
     println("@Date")
     println("input: ${args.joinToString()}")
     if (args.isEmpty()) {
+        println("enter @Date to encode, 0x... to decode or Q to Quit")
         while (true) {
             mainMenu()
         }
     } else {
         val arg1 = args[0]
-        if (arg1 == "-h" || arg1 == "--help") {
-            println("for encoding a date use @Date format")
-            println("Usage: atdate [@date]")
-            println("Example: atdate @2019-05-05 {d:1}@")
-            println()
-            println("for decoding a date use hexadecimal format")
-            println("Usage: atdate [0x....]")
-            println("Example: atdate 0xC007E2")
-            exitProcess(0)
-        }
-        if (arg1.startsWith("@")) {
-            println("Encoding...")
-            val atDate = encode(arg1)
-            printEncodingResult(atDate.getPayload())
-        }
-        if (arg1.startsWith("0x")) {
-            println("Decoding...")
-            val arrayOfBytes = getByteArrayFromHexString(arg1)
-            val atDate = decode(arrayOfBytes)
-            println("Notation: ${atDate.getNotation()}")
+        when {
+            arg1 == "-h" || arg1 == "--help" -> {
+                printHelp()
+                exitProcess(0)
+            }
+
+            arg1.startsWith("@") -> {
+                println("Encoding...")
+                val moment = encodeMoment(arg1)
+                printEncodingResult(moment)
+            }
+
+            arg1.startsWith("0x") -> {
+                println("Decoding...")
+                val arrayOfBytes = getByteArrayFromHexString(arg1)
+                val moment = decodeMoment(arrayOfBytes)
+                printDecodingResult(moment)
+            }
+
+            else -> {
+                println("Invalid input")
+            }
         }
     }
 }
 
 fun mainMenu() {
-    println("1. Encode")
-    println("2. Decode")
-    println("3. Exit")
-    print("Enter your choice: ")
-    when (readlnOrNull()) {
-        "1" -> encodeMenu()
-        "2" -> decodeMenu()
-        "3" -> exitProcess(0)
+    print(">")
+    val command = readlnOrNull()
+    if (command.isNullOrBlank()) {
+        println("Invalid input")
+        return
+    }
+    when (command[0].lowercase()) {
+        "@" -> encodeMenu(command)
+        "0" -> decodeMenu(command)
+        "q" -> exitProcess()
         else -> {
-            println("Invalid choice")
+            println("Invalid input")
         }
     }
 }
 
-fun encodeMenu() {
+fun encodeMenu(input: String) {
     try {
-        print("Enter date in @Date format: ")
-        val input = readlnOrNull() ?: return
-        val atDate = encode(input)
-        printEncodingResult(atDate.getPayload())
+        val moment = encodeMoment(input)
+        printEncodingResult(moment)
     } catch (e: Exception) {
         println("Error: ${e.message}")
     }
 }
 
-fun decodeMenu() {
+fun decodeMenu(input: String) {
     try {
-        print("Enter payload in Hex format (0x1234..) :")
-        val input = readlnOrNull() ?: return
-        val arrayOfUBytes =  getByteArrayFromHexString(input)
-        val atDate = decode(arrayOfUBytes)
-        println("Notation: ${atDate.getNotation()}")
+        val arrayOfUBytes = getByteArrayFromHexString(input)
+        val moment = decodeMoment(arrayOfUBytes)
+        printDecodingResult(moment)
     } catch (e: Exception) {
         println("Error: ${e.message}")
     }
 }
 
-fun exitProcess(status: Int) {
+fun exitProcess(status: Int = 0) {
     println("Exiting with status $status")
     kotlin.system.exitProcess(status)
 }
 
-fun printEncodingResult(payload: Array<UByte>) {
-    println("Hex: 0x${payload.joinToString("") { it.toString(16).padStart(2, '0') }}")
-    println("Bin: 0b${payload.joinToString("") { it.toString(2).padStart(8, '0') }}")
+fun printEncodingResult(moment: Moment) {
+    println("Hex: 0x${moment.getPayload().joinToString("") { it.toString(16).padStart(2, '0') }}")
+    println("Bin: 0b${moment.getPayload().joinToString("") { it.toString(2).padStart(8, '0') }}")
+}
+
+fun printDecodingResult(moment: Moment) {
+    println("Notation: ${moment.getNotation()}")
 }
 
 fun getByteArrayFromHexString(hexString: String): Array<UByte> {
@@ -90,4 +95,14 @@ fun getByteArrayFromHexString(hexString: String): Array<UByte> {
         .chunked(2)
         .map { it.toUByte(16) }
         .toTypedArray()
+}
+
+fun printHelp() {
+    println("for encoding a date use @Date format")
+    println("Usage: atdate [@ISO-Date {properties}@]")
+    println("Example: atdate @2019-05-05 {d:1}@")
+    println()
+    println("for decoding a date use hexadecimal format")
+    println("Usage: atdate [0x....]")
+    println("Example: atdate 0xC007E2")
 }

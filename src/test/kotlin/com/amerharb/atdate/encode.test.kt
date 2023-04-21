@@ -8,7 +8,7 @@ class TestEncode {
     @Test
     fun example1() {
         val input = "@2019-05-05 {d:1}@"
-        val actual = encode(input)
+        val actual = encodeMoment(input)
         val expected = Moment(
             rangeLevel = RangeLevel.Level1,
             resolutionLevel = ResolutionLevel.Level0,
@@ -29,7 +29,7 @@ class TestEncode {
     @Test
     fun example2() {
         val input = "@2019-05-05T19:53:00+02:00 {d:1 t:5 a:s l:0-0 z:1}@"
-        val actual = encode(input)
+        val actual = encodeMoment(input)
         val expected = Moment(
             rangeLevel = RangeLevel.Level1,
             resolutionLevel = ResolutionLevel.Level5,
@@ -49,7 +49,7 @@ class TestEncode {
     @Test
     fun example2UTC() {
         val input = "@2019-05-05T19:53:00Z {d:1 t:5 a:s l:0-0}@"
-        val actual = encode(input)
+        val actual = encodeMoment(input)
         val expected = Moment(
             rangeLevel = RangeLevel.Level1,
             resolutionLevel = ResolutionLevel.Level5,
@@ -69,7 +69,7 @@ class TestEncode {
     @Test
     fun example2LocalTime() {
         val input = "@2019-05-05T19:53:00 {d:1 t:5 a:s l:0-0}@"
-        val actual = encode(input)
+        val actual = encodeMoment(input)
         val expected = Moment(
             rangeLevel = RangeLevel.Level1,
             resolutionLevel = ResolutionLevel.Level5,
@@ -100,7 +100,7 @@ class TestEncode {
             plusLeapSeconds = null,
             minusLeapSeconds = null,
         )
-        val actual = encode(input)
+        val actual = encodeMoment(input)
         println(actual)
         println(expected)
         assertEquals(expected, actual)
