@@ -1,6 +1,6 @@
 package com.amerharb.atdate
 
-fun encode(input: String): Moment {
+fun encodeMoment(input: String): Moment {
     // takes input like "@2019-01-01T00:00:00Z {d:1 t:5 z:1 a:s l:0-0}@"
     // takes input like "@1979-11-14 {d:1 t:5 z:1 a:s l:0-0}@"
     // and returns an AtDate object

@@ -18,14 +18,14 @@ fun main(args: Array<String>) {
 
             arg1.startsWith("@") -> {
                 println("Encoding...")
-                val moment = encode(arg1)
+                val moment = encodeMoment(arg1)
                 printEncodingResult(moment)
             }
 
             arg1.startsWith("0x") -> {
                 println("Decoding...")
                 val arrayOfBytes = getByteArrayFromHexString(arg1)
-                val moment = decode(arrayOfBytes)
+                val moment = decodeMoment(arrayOfBytes)
                 printDecodingResult(moment)
             }
 
@@ -55,7 +55,7 @@ fun mainMenu() {
 
 fun encodeMenu(input: String) {
     try {
-        val moment = encode(input)
+        val moment = encodeMoment(input)
         printEncodingResult(moment)
     } catch (e: Exception) {
         println("Error: ${e.message}")
@@ -65,7 +65,7 @@ fun encodeMenu(input: String) {
 fun decodeMenu(input: String) {
     try {
         val arrayOfUBytes = getByteArrayFromHexString(input)
-        val moment = decode(arrayOfUBytes)
+        val moment = decodeMoment(arrayOfUBytes)
         printDecodingResult(moment)
     } catch (e: Exception) {
         println("Error: ${e.message}")

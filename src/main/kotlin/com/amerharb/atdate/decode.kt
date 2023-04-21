@@ -1,6 +1,6 @@
 package com.amerharb.atdate
 
-fun decode(input: Array<UByte>): Moment {
+fun decodeMoment(input: Array<UByte>): Moment {
     // takes input array of UByte then returns an AtDate object
     val headerList = mutableListOf<UByte>()
     val bodyList = mutableListOf<UByte>()
