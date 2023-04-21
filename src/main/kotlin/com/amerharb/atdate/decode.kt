@@ -240,22 +240,30 @@ fun getTimeFromTimeLong(timeLevel: ResolutionLevel, time: ULong): BasicISOTime {
         }
 
         ResolutionLevel.Level7 -> {
-            val microsecInHour = 60UL * 60UL * 1000UL * 1000UL
+            val microsecInHour = 60UL * 60UL * 1000_000UL
             val hour = time / microsecInHour
-            val minute = time.mod(microsecInHour) / (60UL * 1000UL * 1000UL)
-            val second = time.mod(microsecInHour).mod(60UL * 1000UL * 1000UL).toDouble() / 1_000_000.0
+            val minute = time.mod(microsecInHour) / (60UL * 1000_000UL)
+            val second = time.mod(microsecInHour).mod(60UL * 1000_000UL).toDouble() / 1_000_000.0
             return BasicISOTime(hour.toLong(), minute.toLong(), second)
         }
 
         ResolutionLevel.Level8 -> {
-            val nanosecInHour = 60UL * 60UL * 1000UL * 1000UL * 1000UL
+            val nanosecInHour = 60UL * 60UL * 1000_000_000UL
             val hour = time / nanosecInHour
-            val minute = time.mod(nanosecInHour) / (60UL * 1000UL * 1000UL * 1000UL)
-            val second = time.mod(nanosecInHour).mod((60UL * 1000UL * 1000UL * 1000UL)).toDouble() / 1_000_000_000.0
+            val minute = time.mod(nanosecInHour) / (60UL * 1000_000_000UL)
+            val second = time.mod(nanosecInHour).mod(60UL * 1000_000_000UL).toDouble() / 1_000_000_000.0
             return BasicISOTime(hour.toLong(), minute.toLong(), second)
         }
 
-        else -> TODO() // support for other levels
+        ResolutionLevel.Level9 -> {
+            val picosecInHour = 60UL * 60UL * 1000_000_000_000UL
+            val hour = time / picosecInHour
+            val minute = time.mod(picosecInHour) / (60UL * 1000_000_000_000UL)
+            val second = time.mod(picosecInHour).mod(60UL * 1000_000_000_000UL).toDouble() / 1_000_000_000_000.0
+            return BasicISOTime(hour.toLong(), minute.toLong(), second)
+        }
+
+        else -> throw Exception("Time resolution level: $timeLevel is not supported")  // TODO: support for other levels
     }
 }
 

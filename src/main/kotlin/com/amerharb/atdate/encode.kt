@@ -78,27 +78,39 @@ fun encodeMoment(input: String): Moment {
             ResolutionLevel.Level4 -> Pair(rlevel, (hour * 60UL) + min) // count minutes
             ResolutionLevel.Level5 -> Pair(rlevel, (hour * 3600UL) + (min * 60UL) + sec) // count seconds
             ResolutionLevel.Level6 -> Pair(
-                rlevel, (hour * 3600_000UL) + (min * 60_000UL) + (sec * 1000UL) + secFraction
+                rlevel, (hour * 3600_000UL) + (min * 60_000UL) + (sec * 1000UL)
+                        + secFraction.adaptFraction(rlevel, precision)
             ) // count milliseconds
 
             ResolutionLevel.Level7 -> Pair(
-                rlevel, (hour * 3600_000_000UL) + (min * 60_000_000UL) + (sec * 1000_000UL) + secFraction
+                rlevel, (hour * 3600_000_000UL) + (min * 60_000_000UL) + (sec * 1000_000UL)
+                        + secFraction.adaptFraction(rlevel, precision)
             ) // count microseconds
 
             ResolutionLevel.Level8 -> Pair(
-                rlevel, (hour * 3600_000_000_000UL) + (min * 60_000_000_000UL) + (sec * 1000_000_000UL) + secFraction
+                rlevel,
+                (hour * 3600_000_000_000UL) + (min * 60_000_000_000UL) + (sec * 1000_000_000UL)
+                        + secFraction.adaptFraction(rlevel, precision)
             ) // count nanoseconds
 
             ResolutionLevel.Level9 -> {
                 Pair(
                     rlevel,
-                    hour * 3600_000_000_000_000UL + min * 60_000_000_000_000UL + (sec * 1000_000_000_000UL)
-                            + secFraction
+                    (hour * 3600_000_000_000_000UL) + (min * 60_000_000_000_000UL) + (sec * 1000_000_000_000UL)
+                            + secFraction.adaptFraction(rlevel, precision)
                 ) // count picoseconds
             }
 
+            ResolutionLevel.Level10 -> {
+                Pair(
+                    rlevel,
+                    (hour * 3600_000_000_000_000_000UL) + (min * 60_000_000_000_000_000UL)
+                            + (sec * 1000_000_000_000_000UL) + secFraction.adaptFraction(rlevel, precision)
+                ) // count femtoseconds
+            }
+
             // from Level10 ULong is not enough, go be support later with more than 1 variable
-            ResolutionLevel.Level10 -> throw Exception("Time resolution $rlevel is not supported yet") // TODO:
+//            ResolutionLevel.Level10 -> throw Exception("Time resolution $rlevel is not supported yet") // TODO:
             ResolutionLevel.Level11 -> throw Exception("Time resolution $rlevel is not supported yet") // TODO:
             ResolutionLevel.Level12 -> throw Exception("Time resolution $rlevel is not supported yet") // TODO:
             ResolutionLevel.Level13 -> throw Exception("Time resolution $rlevel is not supported yet") // TODO:
@@ -190,3 +202,15 @@ data class TimeParts(
     val secondFraction: ULong,
     val precision: UByte, // 0-second, 1-millisecond, 2-microsecond, 3-nanosecond, 4-picosecond
 )
+
+fun ULong.pow(exponent: UByte): ULong {
+    var result = 1UL
+    repeat(exponent.toInt()) {
+        result *= this
+    }
+    return result
+}
+
+fun ULong.adaptFraction(resolutionLevel: ResolutionLevel, precision: UByte): ULong =
+    this * 1000UL.pow((resolutionLevel.no - 5U - precision).toUByte())
+
