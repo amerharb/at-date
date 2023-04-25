@@ -12,7 +12,7 @@ data class Period(
 ) : AtDate() {
     override fun getNotation(): String {
         if (isPositiveTinyPeriod()) {
-            return "@P++tp@"
+            return "@P+tp@"
         } else if (isNegativeTinyPeriod()) {
             return "@P-tp@"
         }
