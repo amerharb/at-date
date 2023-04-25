@@ -17,7 +17,7 @@ fun decodeMoment(input: Array<UByte>): Moment {
         }
     }
 
-    val atDateHeader = when (headerList.size) {
+    val atMomentHeader = when (headerList.size) {
         0 -> throw Exception("Invalid input")
         1 -> {
             val h = headerList[0]
@@ -38,7 +38,7 @@ fun decodeMoment(input: Array<UByte>): Moment {
             val zoneLevel = if (h and 0b0000_0010U == (0b0000_0010U).toUByte()) ZoneLevel.Level1 else ZoneLevel.Level0
             val accuracy = if (h and 0b0000_0001U == (0b0000_0001U).toUByte()) Accuracy.End else Accuracy.Start
 
-            AtDateHeader(
+            AtMomentHeader(
                 rangeLevel = rangeLevel,
                 resolutionLevel = resolutionLevel,
                 zoneLevel = zoneLevel,
@@ -102,7 +102,7 @@ fun decodeMoment(input: Array<UByte>): Moment {
                 else -> throw Exception("Invalid input")
             }
 
-            AtDateHeader(
+            AtMomentHeader(
                 rangeLevel = rangeLevel,
                 resolutionLevel = resolutionLevel,
                 zoneLevel = zoneLevel,
@@ -117,26 +117,26 @@ fun decodeMoment(input: Array<UByte>): Moment {
 
     val bodyArray = bodyList.toTypedArray()
     var pointer = 0
-    val date = when (atDateHeader.rangeLevel) {
+    val date = when (atMomentHeader.rangeLevel) {
         RangeLevel.Level0 -> throw Exception("Range level 0 is not possible in Date")
         else -> {
-            val length = getRangeBitCount(atDateHeader.rangeLevel)
+            val length = getRangeBitCount(atMomentHeader.rangeLevel)
             val result = getLongValueFromBytes(bodyArray, pointer, length)
             pointer += length
             result
         }
     } ?: throw Exception("Date value can not be null")
 
-    val timeLength = getResolutionBitCount(atDateHeader.resolutionLevel)
+    val timeLength = getResolutionBitCount(atMomentHeader.resolutionLevel)
     val time = getLongValueFromBytes(bodyArray, pointer, timeLength)
     pointer += timeLength
 
 
-    val zoneLength = getZoneBitCount(atDateHeader.zoneLevel)
+    val zoneLength = getZoneBitCount(atMomentHeader.zoneLevel)
     val zone = getLongValueFromBytes(bodyArray, pointer, zoneLength)
     pointer += zoneLength
 
-    val leapLength = getLeapSecondsBitCount(atDateHeader.leapSecondsFlag) / 2
+    val leapLength = getLeapSecondsBitCount(atMomentHeader.leapSecondsFlag) / 2
     val plusLeapSeconds = getLongValueFromBytes(bodyArray, pointer, leapLength)
     pointer += leapLength
     val minusLeapSeconds = getLongValueFromBytes(bodyArray, pointer, leapLength)
@@ -144,11 +144,11 @@ fun decodeMoment(input: Array<UByte>): Moment {
 
 
     return Moment(
-        rangeLevel = atDateHeader.rangeLevel,
-        resolutionLevel = atDateHeader.resolutionLevel,
-        zoneLevel = atDateHeader.zoneLevel,
-        accuracy = atDateHeader.accuracy,
-        leapSecondsFlag = atDateHeader.leapSecondsFlag,
+        rangeLevel = atMomentHeader.rangeLevel,
+        resolutionLevel = atMomentHeader.resolutionLevel,
+        zoneLevel = atMomentHeader.zoneLevel,
+        accuracy = atMomentHeader.accuracy,
+        leapSecondsFlag = atMomentHeader.leapSecondsFlag,
         date = date,
         time = time,
         zone = zone,

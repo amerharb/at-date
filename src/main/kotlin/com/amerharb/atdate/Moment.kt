@@ -262,7 +262,7 @@ data class Moment(
     }
 }
 
-data class AtDateHeader(
+data class AtMomentHeader(
     val rangeLevel: RangeLevel,
     val resolutionLevel: ResolutionLevel,
     val zoneLevel: ZoneLevel,

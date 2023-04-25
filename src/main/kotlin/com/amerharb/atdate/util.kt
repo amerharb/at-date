@@ -56,9 +56,9 @@ fun getLeapSecondsBitCount(leapSecondsFlag: UByte): Int {
     return leapSecondsFlag.toInt() * 8 * 2
 }
 
-fun getBodyBitCount(atDateHeader: AtDateHeader): Int {
-    return getRangeBitCount(atDateHeader.rangeLevel) +
-        getResolutionBitCount(atDateHeader.resolutionLevel) +
-        getZoneBitCount(atDateHeader.zoneLevel) +
-        getLeapSecondsBitCount(atDateHeader.leapSecondsFlag)
+fun getBodyBitCount(atMomentHeader: AtMomentHeader): Int {
+    return getRangeBitCount(atMomentHeader.rangeLevel) +
+        getResolutionBitCount(atMomentHeader.resolutionLevel) +
+        getZoneBitCount(atMomentHeader.zoneLevel) +
+        getLeapSecondsBitCount(atMomentHeader.leapSecondsFlag)
 }
