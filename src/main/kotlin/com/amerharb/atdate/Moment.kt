@@ -11,15 +11,8 @@ data class Moment(
     val zone: ULong? = null,
     val plusLeapSeconds: ULong? = null,
     val minusLeapSeconds: ULong? = null,
-) {
-    fun getPayload(): Array<UByte> {
-        val payload = mutableListOf<UByte>()
-        payload.addAll(getHeader())
-        payload.addAll(getBody())
-        return payload.toTypedArray()
-    }
-
-    fun getNotation(): String {
+): AtDate() {
+    override fun getNotation(): String {
         val notation = StringBuilder()
         notation.append("@")
         val isoDate = getDateFromJdn(getJdn())
@@ -57,7 +50,7 @@ data class Moment(
         return if (number < 10) "0$noRightZero" else noRightZero
     }
 
-    private fun getHeader(): Array<UByte> {
+    override fun getHeader(): Array<UByte> {
         // check number of header bytes needed
         val headerCount = getHeadBitCount() / 8
 
@@ -69,7 +62,7 @@ data class Moment(
         }
     }
 
-    private fun getBody(): Array<UByte> {
+    override fun getBody(): Array<UByte> {
         var body: ULong = 0U
         // move date bits to the left then add it to body
         val shiftDate = 64 - getRangeBitCount()

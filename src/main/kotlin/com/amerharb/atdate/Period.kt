@@ -9,15 +9,8 @@ data class Period(
     val time: ULong? = null,
     val plusLeapSeconds: ULong? = null,
     val minusLeapSeconds: ULong? = null,
-) {
-    fun getPayload(): Array<UByte> {
-        val payload = mutableListOf<UByte>()
-        payload.addAll(getHeader())
-        payload.addAll(getBody())
-        return payload.toTypedArray()
-    }
-
-    fun getNotation(): String {
+) : AtDate() {
+    override fun getNotation(): String {
         val notation = StringBuilder()
         notation.append("@")
         notation.append("P")
@@ -51,7 +44,7 @@ data class Period(
         return if (number < 10) "0$noRightZero" else noRightZero
     }
 
-    private fun getHeader(): Array<UByte> {
+    override fun getHeader(): Array<UByte> {
         // check number of header bytes needed
         val headerCount = getHeadBitCount() / 8
 
@@ -62,7 +55,7 @@ data class Period(
         }
     }
 
-    private fun getBody(): Array<UByte> {
+    override fun getBody(): Array<UByte> {
         var body: ULong = 0U
         // move date bits to the left then add it to body
         val shiftDate = 64 - getRangeBitCount()
