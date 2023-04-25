@@ -5,7 +5,7 @@ data class Period(
     val rangeLevel: RangeLevel = RangeLevel.Level1, // TODO: Period can be more than level4
     val resolutionLevel: ResolutionLevel = ResolutionLevel.Level0,
     val leapSecondsFlag: UByte = 0U,
-    val date: ULong = 0U,
+    val date: ULong? = 0U,
     val time: ULong? = null,
     val plusLeapSeconds: ULong? = null,
     val minusLeapSeconds: ULong? = null,
@@ -66,7 +66,7 @@ data class Period(
         var body: ULong = 0U
         // move date bits to the left then add it to body
         val shiftDate = 64 - getRangeBitCount()
-        body = body or (date shl shiftDate)
+        body = body or ((date ?: 0U) shl shiftDate)
         // move time bits to the left then add it to body
         val shiftTime = shiftDate - getResolutionBitCount()
         body = body or ((time ?: 0U) shl shiftTime)

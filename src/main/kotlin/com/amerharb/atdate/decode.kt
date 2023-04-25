@@ -47,6 +47,7 @@ fun decodeMoment(input: Array<UByte>): Moment {
             )
 
         }
+
         2 -> {
             val h1 = headerList[0]
             if (h1 and (0b0100_0000U).toUByte() != (0b0100_0000).toUByte()) throw Exception("Period is not supported yet")
@@ -152,6 +153,148 @@ fun decodeMoment(input: Array<UByte>): Moment {
         date = date,
         time = time,
         zone = zone,
+        plusLeapSeconds = plusLeapSeconds,
+        minusLeapSeconds = minusLeapSeconds,
+    )
+}
+
+fun decodePeriod(input: Array<UByte>): Period {
+    // takes input array of UByte then returns an AtDate object
+    val headerList = mutableListOf<UByte>()
+    val bodyList = mutableListOf<UByte>()
+    var lastHeadFound = false
+    for (b in input) {
+        if (!lastHeadFound) {
+            headerList.add(b)
+            if (b.toUInt() and 0b1000_0000U == 0b1000_0000U) {
+                lastHeadFound = true
+            }
+            continue
+        } else {
+            bodyList.add(b)
+        }
+    }
+
+    val periodHeader = when (headerList.size) {
+        0 -> throw Exception("Invalid input")
+        1 -> {
+            val h = headerList[0]
+            if (h and (0b0100_0000U).toUByte() == (0b0100_0000).toUByte()) throw Exception("Moment is not supported here")
+            val sign = h and (0b0010_0000U).toUByte() != (0b0010_0000U).toUByte()
+            val rangeLevel = when (h and 0b0001_1000U) {
+                (0b0000_0000U).toUByte() -> RangeLevel.Level0
+                (0b0000_1000U).toUByte() -> RangeLevel.Level1
+                (0b0001_0000U).toUByte() -> RangeLevel.Level2
+                (0b0001_1000U).toUByte() -> RangeLevel.Level3
+                else -> throw Exception("Invalid input")
+            }
+            val resolutionLevel = when (h and 0b0000_0111U) {
+                (0b0000_0000U).toUByte() -> ResolutionLevel.Level0
+                (0b0000_0001U).toUByte() -> ResolutionLevel.Level1
+                (0b0000_0010U).toUByte() -> ResolutionLevel.Level2
+                (0b0000_0011U).toUByte() -> ResolutionLevel.Level3
+                (0b0000_0100U).toUByte() -> ResolutionLevel.Level4
+                (0b0000_0101U).toUByte() -> ResolutionLevel.Level5
+                (0b0000_0110U).toUByte() -> ResolutionLevel.Level6
+                (0b0000_0111U).toUByte() -> ResolutionLevel.Level7
+                else -> throw Exception("Invalid input")
+            }
+
+            AtPeriodHeader(
+                sign = sign,
+                rangeLevel = rangeLevel,
+                resolutionLevel = resolutionLevel,
+                leapSecondsFlag = 0U,
+            )
+
+        }
+
+        2 -> {
+            val h1 = headerList[0]
+            if (h1 and (0b0100_0000U).toUByte() == (0b0100_0000).toUByte()) throw Exception("Moment is not supported here")
+            val sign = h1 and (0b0010_0000U).toUByte() != (0b0010_0000U).toUByte()
+
+            val rangeLevel = when (h1 and 0b0001_1100U) {
+                (0b0000_0000).toUByte() -> RangeLevel.Level0
+                (0b0000_0100U).toUByte() -> RangeLevel.Level1
+                (0b0000_1000U).toUByte() -> RangeLevel.Level2
+                (0b0000_1100U).toUByte() -> RangeLevel.Level3
+                (0b0001_0000U).toUByte() -> RangeLevel.Level4
+                // TODO: support more than level 4
+                else -> throw Exception("Invalid input")
+            }
+            val h2 = headerList[1]
+            val resolutionLevel = when (Pair(h1 and 0b0000_0011U, h2 and 0b0111_0000U)) {
+                Pair(0b0000_0000U.toUByte(), 0b0000_0000U.toUByte()) -> ResolutionLevel.Level0
+                Pair(0b0000_0000U.toUByte(), 0b0001_0000U.toUByte()) -> ResolutionLevel.Level1
+                Pair(0b0000_0000U.toUByte(), 0b0010_0000U.toUByte()) -> ResolutionLevel.Level2
+                Pair(0b0000_0000U.toUByte(), 0b0011_0000U.toUByte()) -> ResolutionLevel.Level3
+                Pair(0b0000_0000U.toUByte(), 0b0100_0000U.toUByte()) -> ResolutionLevel.Level4
+                Pair(0b0000_0000U.toUByte(), 0b0101_0000U.toUByte()) -> ResolutionLevel.Level5
+                Pair(0b0000_0000U.toUByte(), 0b0110_0000U.toUByte()) -> ResolutionLevel.Level6
+                Pair(0b0000_0000U.toUByte(), 0b0111_0000U.toUByte()) -> ResolutionLevel.Level7
+                Pair(0b0000_0001U.toUByte(), 0b0000_0000U.toUByte()) -> ResolutionLevel.Level8
+                Pair(0b0000_0001U.toUByte(), 0b0001_0000U.toUByte()) -> ResolutionLevel.Level9
+                Pair(0b0000_0001U.toUByte(), 0b0010_0000U.toUByte()) -> ResolutionLevel.Level10
+                Pair(0b0000_0001U.toUByte(), 0b0011_0000U.toUByte()) -> ResolutionLevel.Level11
+                Pair(0b0000_0001U.toUByte(), 0b0100_0000U.toUByte()) -> ResolutionLevel.Level12
+                Pair(0b0000_0001U.toUByte(), 0b0101_0000U.toUByte()) -> ResolutionLevel.Level13
+                Pair(0b0000_0001U.toUByte(), 0b0110_0000U.toUByte()) -> ResolutionLevel.Level14
+                Pair(0b0000_0001U.toUByte(), 0b0111_0000U.toUByte()) -> ResolutionLevel.Level15
+                Pair(0b0000_0010U.toUByte(), 0b0000_0000U.toUByte()) -> ResolutionLevel.Level16
+                Pair(0b0000_0010U.toUByte(), 0b0001_0000U.toUByte()) -> ResolutionLevel.Level17
+                Pair(0b0000_0010U.toUByte(), 0b0010_0000U.toUByte()) -> ResolutionLevel.Level18
+                Pair(0b0000_0010U.toUByte(), 0b0011_0000U.toUByte()) -> ResolutionLevel.Level19
+                Pair(0b0000_0010U.toUByte(), 0b0100_0000U.toUByte()) -> ResolutionLevel.Level20
+                else -> throw Exception("Invalid input")
+            }
+            val leapSecondsFlag = when (h2 and 0b0000_1110U) {
+                (0b0000_0000U).toUByte() -> (0U).toUByte()
+                (0b0000_0010U).toUByte() -> (1U).toUByte()
+                (0b0000_0100U).toUByte() -> (2U).toUByte()
+                (0b0000_0110U).toUByte() -> (3U).toUByte()
+                (0b0000_1000U).toUByte() -> (4U).toUByte()
+                (0b0000_1010U).toUByte() -> (5U).toUByte()
+                (0b0000_1100U).toUByte() -> (6U).toUByte()
+                (0b0000_1110U).toUByte() -> (7U).toUByte()
+                else -> throw Exception("Invalid input")
+            }
+
+            AtPeriodHeader(
+                sign = sign,
+                rangeLevel = rangeLevel,
+                resolutionLevel = resolutionLevel,
+                leapSecondsFlag = leapSecondsFlag
+            )
+        }
+
+        else -> throw Exception("3 or more bytes Period headers are not supported.")
+    }
+
+    val bodyArray = bodyList.toTypedArray()
+    var pointer = 0
+    val length = getRangeBitCount(periodHeader.rangeLevel)
+    val date = getLongValueFromBytes(bodyArray, pointer, length)
+    pointer += length
+
+    val timeLength = getResolutionBitCount(periodHeader.resolutionLevel)
+    val time = getLongValueFromBytes(bodyArray, pointer, timeLength)
+    pointer += timeLength
+
+    val leapLength = getLeapSecondsBitCount(periodHeader.leapSecondsFlag) / 2
+    val plusLeapSeconds = getLongValueFromBytes(bodyArray, pointer, leapLength)
+    pointer += leapLength
+    val minusLeapSeconds = getLongValueFromBytes(bodyArray, pointer, leapLength)
+    pointer += leapLength
+
+
+    return Period(
+        sign = periodHeader.sign,
+        rangeLevel = periodHeader.rangeLevel,
+        resolutionLevel = periodHeader.resolutionLevel,
+        leapSecondsFlag = periodHeader.leapSecondsFlag,
+        date = date,
+        time = time,
         plusLeapSeconds = plusLeapSeconds,
         minusLeapSeconds = minusLeapSeconds,
     )
@@ -276,6 +419,7 @@ fun getZone(zoneLevel: ZoneLevel, zone: ULong): String {
             val minute = (zone.toInt() and 0b000011) * 15
             "$sign${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}"
         }
+
         ZoneLevel.Level2 -> TODO()
         ZoneLevel.Level3 -> TODO()
         ZoneLevel.Level4 -> TODO()
