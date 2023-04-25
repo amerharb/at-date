@@ -132,6 +132,42 @@ class TestMain {
         System.setOut(originalOut)
     }
 
+    @Test
+    fun testEncodePositiveTinyPeriod() {
+        val outContent = ByteArrayOutputStream()
+        val originalOut = System.out
+        System.setOut(PrintStream(outContent))
+        val input = "@P+tp@"
+        main(arrayOf(input))
+        val actual = outContent.toString().replace("\r\n", "\n")
+        val expected = """|@Date
+                          |input: $input
+                          |Encoding...
+                          |Hex: 0x80
+                          |Bin: 0b10000000
+                          |""".trimMargin("|")
+        assertEquals(expected, actual)
+        System.setOut(originalOut)
+    }
+
+    @Test
+    fun testEncodeNegativeTinyPeriod() {
+        val outContent = ByteArrayOutputStream()
+        val originalOut = System.out
+        System.setOut(PrintStream(outContent))
+        val input = "@P-tp@"
+        main(arrayOf(input))
+        val actual = outContent.toString().replace("\r\n", "\n")
+        val expected = """|@Date
+                          |input: $input
+                          |Encoding...
+                          |Hex: 0xa0
+                          |Bin: 0b10100000
+                          |""".trimMargin("|")
+        assertEquals(expected, actual)
+        System.setOut(originalOut)
+    }
+
     // Decoding Period Examples
     @Test
     fun testDecodeCase1() {
@@ -145,6 +181,40 @@ class TestMain {
                           |input: $input
                           |Decoding...
                           |Notation: @P+1D { d:1 t:0 l:0-0 }@
+                          |""".trimMargin("|")
+        assertEquals(expected, actual)
+        System.setOut(originalOut)
+    }
+
+    @Test
+    fun testDecodePositiveTinyPeriod() {
+        val outContent = ByteArrayOutputStream()
+        val originalOut = System.out
+        System.setOut(PrintStream(outContent))
+        val input = "0x80"
+        main(arrayOf(input))
+        val actual = outContent.toString().replace("\r\n", "\n")
+        val expected = """|@Date
+                          |input: $input
+                          |Decoding...
+                          |Notation: @P+tp@
+                          |""".trimMargin("|")
+        assertEquals(expected, actual)
+        System.setOut(originalOut)
+    }
+
+    @Test
+    fun testDecodeNegativeTinyPeriod() {
+        val outContent = ByteArrayOutputStream()
+        val originalOut = System.out
+        System.setOut(PrintStream(outContent))
+        val input = "0xa0"
+        main(arrayOf(input))
+        val actual = outContent.toString().replace("\r\n", "\n")
+        val expected = """|@Date
+                          |input: $input
+                          |Decoding...
+                          |Notation: @P-tp@
                           |""".trimMargin("|")
         assertEquals(expected, actual)
         System.setOut(originalOut)

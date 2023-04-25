@@ -174,6 +174,11 @@ fun encodePeriod(input: String): Period {
     // takes input like "@P1DT05:00:00 {d:1 t:5 l:0-0}@"
     // and returns an Period object
     val ad = input.trim().substringAfter("@P").substringBefore("@").trim()
+    if (ad.trim() == "+tp") {
+        return Period.getPositiveTinyPeriod()
+    } else if (ad.trim() == "-tp") {
+        return Period.getNegativeTinyPeriod()
+    }
     val dayTime = ad.substringBefore("{").trim()
     val dayTimeArr = dayTime.split("T")
     val dayPart = dayTimeArr[0].substringBefore("D")

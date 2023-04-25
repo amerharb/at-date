@@ -11,6 +11,11 @@ data class Period(
     val minusLeapSeconds: ULong? = null,
 ) : AtDate() {
     override fun getNotation(): String {
+        if (isPositiveTinyPeriod()) {
+            return "@P+tp@"
+        } else if (isNegativeTinyPeriod()) {
+            return "@P-tp@"
+        }
         val notation = StringBuilder()
         notation.append("@")
         notation.append("P")
@@ -80,10 +85,20 @@ data class Period(
 
         // TODO: support body longer than 8 bytes
         val bodyList = mutableListOf<UByte>()
-        for (i in (64 - 8) downTo (64 - (8 + bodyBitCount)) step 8) {
-            bodyList.add((body shr i).toUByte())
+        if (bodyByteCount > 0) {
+            for (i in (64 - 8) downTo (64 - (8 + bodyBitCount)) step 8) {
+                bodyList.add((body shr i).toUByte())
+            }
         }
         return bodyList.toTypedArray()
+    }
+
+    fun isPositiveTinyPeriod(): Boolean {
+        return sign && rangeLevel == RangeLevel.Level0 && resolutionLevel == ResolutionLevel.Level0
+    }
+
+    fun isNegativeTinyPeriod(): Boolean {
+        return !sign && rangeLevel == RangeLevel.Level0 && resolutionLevel == ResolutionLevel.Level0
     }
 
     private fun getPeriodHeader1Byte(): Array<UByte> {
@@ -184,6 +199,24 @@ data class Period(
     private fun getResolutionBitCount(): Int = getResolutionBitCount(this.resolutionLevel)
 
     private fun getLeapSecondsBitCount(): Int = getLeapSecondsBitCount(this.leapSecondsFlag)
+
+    companion object {
+        private fun getTinyPeriod(sign: Boolean): Period {
+            return Period(
+                sign = sign,
+                rangeLevel = RangeLevel.Level0,
+                resolutionLevel = ResolutionLevel.Level0,
+                leapSecondsFlag = 0U,
+                date = null,
+                time = null,
+                plusLeapSeconds = null,
+                minusLeapSeconds = null,
+            )
+        }
+
+        fun getPositiveTinyPeriod() = getTinyPeriod(true)
+        fun getNegativeTinyPeriod() = getTinyPeriod(false)
+    }
 }
 
 data class AtPeriodHeader(
