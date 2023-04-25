@@ -3,8 +3,8 @@ package com.amerharb.atdate
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-// test encode function
-class TestEncode {
+// test encodeMoment function
+class TestEncodeMoment {
     @Test
     fun example1() {
         val input = "@2019-05-05 {d:1}@"
@@ -101,6 +101,47 @@ class TestEncode {
             minusLeapSeconds = null,
         )
         val actual = encodeMoment(input)
+        println(actual)
+        println(expected)
+        assertEquals(expected, actual)
+    }
+}
+
+// test encodePeriod function
+class TestEncodePeriod {
+    @Test
+    fun case1() {
+        val input = "@P1D@"
+        val actual = encodePeriod(input)
+        val expected = Period(
+            sign = true,
+            rangeLevel = RangeLevel.Level1,
+            resolutionLevel = ResolutionLevel.Level0,
+            leapSecondsFlag = 0U,
+            date = 1U,
+            time = null,
+            plusLeapSeconds = null,
+            minusLeapSeconds = null,
+        )
+        println(actual)
+        println(expected)
+        assertEquals(expected, actual)
+    }
+
+    @Test
+    fun case2() {
+        val input = "@P-1DT00:00:02@"
+        val actual = encodePeriod(input)
+        val expected = Period(
+            sign = false,
+            rangeLevel = RangeLevel.Level1,
+            resolutionLevel = ResolutionLevel.Level5,
+            leapSecondsFlag = 0U,
+            date = 1U,
+            time = 2U,
+            plusLeapSeconds = null,
+            minusLeapSeconds = null,
+        )
         println(actual)
         println(expected)
         assertEquals(expected, actual)
