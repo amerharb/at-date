@@ -159,6 +159,10 @@ fun encodeMoment(input: String): Moment {
     )
 }
 
+fun encodePeriod(input: String): Period {
+    TODO() // TODO:
+}
+
 fun getJdn(year: Long, month: Long, day: Long): Long {
     val p1 = (1461 * (year + 4800 + (month - 14) / 12)) / 4
     val p2 = (367 * (month - 2 - 12 * ((month - 14) / 12))) / 12
