@@ -7,6 +7,23 @@ import kotlin.test.assertEquals
 
 class TestMain {
     @Test
+    fun testEncodeExample1() {
+        val outContent = ByteArrayOutputStream()
+        val originalOut = System.out
+        System.setOut(PrintStream(outContent))
+        val input = "@2019-05-05{d:1 t:0 a:s l:0-0}@"
+        main(arrayOf(input))
+        val actual = outContent.toString().replace("\r\n", "\n")
+        val expected = """|@Date
+                          |input: $input
+                          |Encoding...
+                          |Hex: 0xc007e2
+                          |Bin: 0b110000000000011111100010
+                          |""".trimMargin("|")
+        assertEquals(expected, actual)
+        System.setOut(originalOut)
+    }
+        @Test
     fun testEncodeExample2() {
         val outContent = ByteArrayOutputStream()
         val originalOut = System.out
