@@ -44,8 +44,8 @@ fun mainMenu() {
         return
     }
     when (command[0].lowercase()) {
-        "@" -> encode(command)
-        "0" -> decode(command)
+        "@" -> encodeCommand(command)
+        "0" -> decodeCommand(command)
         "q" -> exitProcess()
         else -> {
             println("Invalid input")
@@ -53,20 +53,18 @@ fun mainMenu() {
     }
 }
 
-fun encode(input: String) {
+fun encodeCommand(input: String) {
     try {
-        val moment = encodeMoment(input)
-        printEncodingResult(moment)
+        printEncodingResult(encode(input))
     } catch (e: Exception) {
         println("Error: ${e.message}")
     }
 }
 
-fun decode(input: String) {
+fun decodeCommand(input: String) {
     try {
         val arrayOfUBytes = getByteArrayFromHexString(input)
-        val moment = decodeMoment(arrayOfUBytes)
-        printDecodingResult(moment)
+        printDecodingResult(decode(arrayOfUBytes))
     } catch (e: Exception) {
         println("Error: ${e.message}")
     }
@@ -77,13 +75,13 @@ fun exitProcess(status: Int = 0) {
     kotlin.system.exitProcess(status)
 }
 
-fun printEncodingResult(moment: Moment) {
-    println("Hex: 0x${moment.getPayload().joinToString("") { it.toString(16).padStart(2, '0') }}")
-    println("Bin: 0b${moment.getPayload().joinToString("") { it.toString(2).padStart(8, '0') }}")
+fun printEncodingResult(atDate: AtDate) {
+    println("Hex: 0x${atDate.getPayload().joinToString("") { it.toString(16).padStart(2, '0') }}")
+    println("Bin: 0b${atDate.getPayload().joinToString("") { it.toString(2).padStart(8, '0') }}")
 }
 
-fun printDecodingResult(moment: Moment) {
-    println("Notation: ${moment.getNotation()}")
+fun printDecodingResult(atDate: AtDate) {
+    println("Notation: ${atDate.getNotation()}")
 }
 
 fun getByteArrayFromHexString(hexString: String): Array<UByte> {

@@ -1,5 +1,13 @@
 package com.amerharb.atdate
 
+fun decode(input: Array<UByte>): AtDate {
+    return if (input[0] and 0b0100_0000U == 0b0100_0000U.toUByte()) {
+        decodeMoment(input)
+    } else {
+        decodePeriod(input)
+    }
+}
+
 fun decodeMoment(input: Array<UByte>): Moment {
     // takes input array of UByte then returns an AtDate object
     val headerList = mutableListOf<UByte>()

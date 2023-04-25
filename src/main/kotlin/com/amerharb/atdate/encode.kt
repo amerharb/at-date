@@ -2,6 +2,14 @@ package com.amerharb.atdate
 
 import kotlin.math.absoluteValue
 
+fun encode(input: String): AtDate {
+    return if (input.startsWith("@P")) {
+        encodePeriod(input)
+    } else {
+        encodeMoment(input)
+    }
+}
+
 fun encodeMoment(input: String): Moment {
     // takes input like "@2019-01-01T00:00:00Z {d:1 t:5 z:1 a:s l:0-0}@"
     // takes input like "@1979-11-14 {d:1 t:5 z:1 a:s l:0-0}@"
