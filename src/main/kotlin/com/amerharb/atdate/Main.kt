@@ -18,15 +18,13 @@ fun main(args: Array<String>) {
 
             arg1.startsWith("@") -> {
                 println("Encoding...")
-                val moment = encodeMoment(arg1)
-                printEncodingResult(moment)
+                printEncodingResult(encode(arg1))
             }
 
             arg1.startsWith("0x") -> {
                 println("Decoding...")
                 val arrayOfBytes = getByteArrayFromHexString(arg1)
-                val moment = decodeMoment(arrayOfBytes)
-                printDecodingResult(moment)
+                printDecodingResult(decode(arrayOfBytes))
             }
 
             else -> {
