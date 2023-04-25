@@ -44,8 +44,8 @@ fun mainMenu() {
         return
     }
     when (command[0].lowercase()) {
-        "@" -> encodeMenu(command)
-        "0" -> decodeMenu(command)
+        "@" -> encode(command)
+        "0" -> decode(command)
         "q" -> exitProcess()
         else -> {
             println("Invalid input")
@@ -53,7 +53,7 @@ fun mainMenu() {
     }
 }
 
-fun encodeMenu(input: String) {
+fun encode(input: String) {
     try {
         val moment = encodeMoment(input)
         printEncodingResult(moment)
@@ -62,7 +62,7 @@ fun encodeMenu(input: String) {
     }
 }
 
-fun decodeMenu(input: String) {
+fun decode(input: String) {
     try {
         val arrayOfUBytes = getByteArrayFromHexString(input)
         val moment = decodeMoment(arrayOfUBytes)
