@@ -3,8 +3,8 @@ package com.amerharb.atdate
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-// test decode function
-class TestDecode {
+// test decode Moment function
+class TestDecodeMoment {
     @OptIn(ExperimentalUnsignedTypes::class)
     @Test
     fun example1() {
@@ -47,6 +47,28 @@ class TestDecode {
         )
         println(actual)
         println(expected)
+        assertEquals(expected, actual)
+    }
+}
+
+// test decode Period function
+class TestDecodePeriod {
+    @OptIn(ExperimentalUnsignedTypes::class)
+    @Test
+    fun case1() {
+        // "@P1D@"
+        val input = ubyteArrayOf(0b1000_1000U, 0U, 2U).toTypedArray()
+        val actual = decodePeriod(input)
+        val expected = Period(
+            sign = true,
+            rangeLevel = RangeLevel.Level1,
+            resolutionLevel = ResolutionLevel.Level0,
+            leapSecondsFlag = 0U,
+            date = 1U,
+            time = null,
+            plusLeapSeconds = null,
+            minusLeapSeconds = null,
+        )
         assertEquals(expected, actual)
     }
 }
