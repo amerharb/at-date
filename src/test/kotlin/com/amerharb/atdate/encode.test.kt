@@ -9,20 +9,7 @@ class TestEncodeMoment {
     fun example1() {
         val input = "@2019-05-05 {d:1}@"
         val actual = encodeMoment(input)
-        val expected = Moment(
-            rangeLevel = RangeLevel.Level1,
-            resolutionLevel = ResolutionLevel.Level0,
-            zoneLevel = ZoneLevel.Level0,
-            accuracy = Accuracy.Start,
-            leapSecondsFlag = 0U,
-            date = 0b11_11110001U,
-            time = null,
-            zone = null,
-            plusLeapSeconds = null,
-            minusLeapSeconds = null,
-        )
-        println(actual)
-        println(expected)
+        val expected = Examples.example1
         assertEquals(expected, actual)
     }
 
@@ -30,19 +17,7 @@ class TestEncodeMoment {
     fun example2() {
         val input = "@2019-05-05T19:53:00+02:00 {d:1 t:5 a:s l:0-0 z:1}@"
         val actual = encodeMoment(input)
-        val expected = Moment(
-            rangeLevel = RangeLevel.Level1,
-            resolutionLevel = ResolutionLevel.Level5,
-            zoneLevel = ZoneLevel.Level1,
-            accuracy = Accuracy.Start,
-            date = 0b11_11110001U,
-            time = 0b1_00010111_10011100U,
-            zone = 0b1000U,
-            plusLeapSeconds = null,
-            minusLeapSeconds = null,
-        )
-        println(actual)
-        println(expected)
+        val expected = Examples.example2
         assertEquals(expected, actual)
     }
 
@@ -61,8 +36,6 @@ class TestEncodeMoment {
             plusLeapSeconds = null,
             minusLeapSeconds = null,
         )
-        println(actual)
-        println(expected)
         assertEquals(expected, actual)
     }
 
@@ -81,8 +54,6 @@ class TestEncodeMoment {
             plusLeapSeconds = null,
             minusLeapSeconds = null,
         )
-        println(actual)
-        println(expected)
         assertEquals(expected, actual)
     }
 
@@ -101,8 +72,6 @@ class TestEncodeMoment {
             minusLeapSeconds = null,
         )
         val actual = encodeMoment(input)
-        println(actual)
-        println(expected)
         assertEquals(expected, actual)
     }
 }
@@ -110,26 +79,15 @@ class TestEncodeMoment {
 // test encodePeriod function
 class TestEncodePeriod {
     @Test
-    fun case1() {
+    fun example4() {
         val input = "@P1D@"
         val actual = encodePeriod(input)
-        val expected = Period(
-            sign = true,
-            rangeLevel = RangeLevel.Level1,
-            resolutionLevel = ResolutionLevel.Level0,
-            leapSecondsFlag = 0U,
-            date = 1U,
-            time = null,
-            plusLeapSeconds = null,
-            minusLeapSeconds = null,
-        )
-        println(actual)
-        println(expected)
+        val expected = Examples.example4
         assertEquals(expected, actual)
     }
 
     @Test
-    fun case2() {
+    fun case1() {
         val input = "@P-1DT00:00:02@"
         val actual = encodePeriod(input)
         val expected = Period(
@@ -142,8 +100,6 @@ class TestEncodePeriod {
             plusLeapSeconds = null,
             minusLeapSeconds = null,
         )
-        println(actual)
-        println(expected)
         assertEquals(expected, actual)
     }
 }
@@ -158,8 +114,6 @@ class TestGetJdn {
         val (year, month, day) = input.split("-").map { it.toLong() }
         val actual = getJdn(year, month, day)
         val expected = 0b00100101_10000011_11110001L // 2458609
-        println(actual)
-        println(expected)
         assertEquals(expected, actual)
     }
 
@@ -167,8 +121,6 @@ class TestGetJdn {
     fun testDay0() {
         val actual = getJdn(-4713, 11, 24) // year: 4714BC month: 11 day: 24
         val expected = 0L
-        println(actual)
-        println(expected)
         assertEquals(expected, actual)
     }
 }
