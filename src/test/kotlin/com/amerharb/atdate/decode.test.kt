@@ -55,7 +55,7 @@ class TestDecodeMoment {
 class TestDecodePeriod {
     @OptIn(ExperimentalUnsignedTypes::class)
     @Test
-    fun case1() {
+    fun example4() {
         // "@P1D@"
         val input = ubyteArrayOf(0b1000_1000U, 0U, 2U).toTypedArray()
         val actual = decodePeriod(input)

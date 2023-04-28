@@ -110,7 +110,7 @@ class TestEncodeMoment {
 // test encodePeriod function
 class TestEncodePeriod {
     @Test
-    fun case1() {
+    fun example4() {
         val input = "@P1D@"
         val actual = encodePeriod(input)
         val expected = Period(
@@ -129,7 +129,7 @@ class TestEncodePeriod {
     }
 
     @Test
-    fun case2() {
+    fun case1() {
         val input = "@P-1DT00:00:02@"
         val actual = encodePeriod(input)
         val expected = Period(
