@@ -23,8 +23,6 @@ class TestDecodeMoment {
             plusLeapSeconds = null,
             minusLeapSeconds = null,
         )
-        println(actual)
-        println(expected)
         assertEquals(expected, actual)
     }
 
@@ -32,7 +30,7 @@ class TestDecodeMoment {
     @Test
     fun example2() {
         // "@2019-05-05T19:53:00+02:00 {d:1, t:5, a:s, l:0-0, z:1}@"
-        val input =  ubyteArrayOf(0xD6U, 0x07U, 0xE3U, 0x17U, 0x9CU, 0x10U).toTypedArray()
+        val input = ubyteArrayOf(0xD6U, 0x07U, 0xE3U, 0x17U, 0x9CU, 0x10U).toTypedArray()
         val actual = decodeMoment(input)
         val expected = Moment(
             rangeLevel = RangeLevel.Level1,
@@ -45,8 +43,6 @@ class TestDecodeMoment {
             plusLeapSeconds = null,
             minusLeapSeconds = null,
         )
-        println(actual)
-        println(expected)
         assertEquals(expected, actual)
     }
 }
@@ -78,26 +74,20 @@ class TestGetDateFromJdn {
     fun test20190505() {
         val actual = getDateFromJdn(2458609L)
         val expected = BasicISODate(2019, 5, 5)
-        println(actual)
-        println(expected)
         assertEquals(expected, actual)
     }
 
     @Test
-    fun test20200606(){
+    fun test20200606() {
         val actual = getDateFromJdn(2459007L)
         val expected = BasicISODate(2020, 6, 6)
-        println(actual)
-        println(expected)
-        assert(actual == expected)
+        assertEquals(expected, actual)
     }
 
     @Test
     fun testDay0() {
         val actual = getDateFromJdn(0)
         val expected = BasicISODate(-4713, 11, 24)
-        println(actual)
-        println(expected)
         assertEquals(expected, actual)
     }
 }

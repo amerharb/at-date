@@ -21,8 +21,6 @@ class TestEncodeMoment {
             plusLeapSeconds = null,
             minusLeapSeconds = null,
         )
-        println(actual)
-        println(expected)
         assertEquals(expected, actual)
     }
 
@@ -41,8 +39,6 @@ class TestEncodeMoment {
             plusLeapSeconds = null,
             minusLeapSeconds = null,
         )
-        println(actual)
-        println(expected)
         assertEquals(expected, actual)
     }
 
@@ -61,8 +57,6 @@ class TestEncodeMoment {
             plusLeapSeconds = null,
             minusLeapSeconds = null,
         )
-        println(actual)
-        println(expected)
         assertEquals(expected, actual)
     }
 
@@ -81,8 +75,6 @@ class TestEncodeMoment {
             plusLeapSeconds = null,
             minusLeapSeconds = null,
         )
-        println(actual)
-        println(expected)
         assertEquals(expected, actual)
     }
 
@@ -101,8 +93,6 @@ class TestEncodeMoment {
             minusLeapSeconds = null,
         )
         val actual = encodeMoment(input)
-        println(actual)
-        println(expected)
         assertEquals(expected, actual)
     }
 }
@@ -123,8 +113,6 @@ class TestEncodePeriod {
             plusLeapSeconds = null,
             minusLeapSeconds = null,
         )
-        println(actual)
-        println(expected)
         assertEquals(expected, actual)
     }
 
@@ -142,8 +130,6 @@ class TestEncodePeriod {
             plusLeapSeconds = null,
             minusLeapSeconds = null,
         )
-        println(actual)
-        println(expected)
         assertEquals(expected, actual)
     }
 }
@@ -158,8 +144,6 @@ class TestGetJdn {
         val (year, month, day) = input.split("-").map { it.toLong() }
         val actual = getJdn(year, month, day)
         val expected = 0b00100101_10000011_11110001L // 2458609
-        println(actual)
-        println(expected)
         assertEquals(expected, actual)
     }
 
@@ -167,8 +151,6 @@ class TestGetJdn {
     fun testDay0() {
         val actual = getJdn(-4713, 11, 24) // year: 4714BC month: 11 day: 24
         val expected = 0L
-        println(actual)
-        println(expected)
         assertEquals(expected, actual)
     }
 }
