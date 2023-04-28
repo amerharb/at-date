@@ -5,7 +5,7 @@ import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
 
 class TestPeriod {
-    val example4 = Period(
+    private val example4 = Period(
         sign = true,
         rangeLevel = RangeLevel.Level1,
         resolutionLevel = ResolutionLevel.Level0,
