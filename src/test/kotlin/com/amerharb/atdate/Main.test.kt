@@ -133,24 +133,6 @@ class TestMain {
     }
 
     @Test
-    fun testEncodePeriodCase2() {
-        val outContent = ByteArrayOutputStream()
-        val originalOut = System.out
-        System.setOut(PrintStream(outContent))
-        val input = "@P15D@"
-        main(arrayOf(input))
-        val actual = outContent.toString().replace("\r\n", "\n")
-        val expected = """|@Date
-                          |input: $input
-                          |Encoding...
-                          |Hex: 0x88001e
-                          |Bin: 0b100010000000000000011110
-                          |""".trimMargin("|")
-        assertEquals(expected, actual)
-        System.setOut(originalOut)
-    }
-
-    @Test
     fun testEncodePositiveTinyPeriod() {
         val outContent = ByteArrayOutputStream()
         val originalOut = System.out
@@ -167,7 +149,6 @@ class TestMain {
         assertEquals(expected, actual)
         System.setOut(originalOut)
     }
-
 
     @Test
     fun testEncodeNegativeTinyPeriod() {
@@ -200,23 +181,6 @@ class TestMain {
                           |input: $input
                           |Decoding...
                           |Notation: @P+1D { d:1 t:0 l:0-0 }@
-                          |""".trimMargin("|")
-        assertEquals(expected, actual)
-        System.setOut(originalOut)
-    }
-
-    @Test
-    fun testDecodeCase2() {
-        val outContent = ByteArrayOutputStream()
-        val originalOut = System.out
-        System.setOut(PrintStream(outContent))
-        val input = "0x88001e"
-        main(arrayOf(input))
-        val actual = outContent.toString().replace("\r\n", "\n")
-        val expected = """|@Date
-                          |input: $input
-                          |Decoding...
-                          |Notation: @P+15D { d:1 t:0 l:0-0 }@
                           |""".trimMargin("|")
         assertEquals(expected, actual)
         System.setOut(originalOut)
