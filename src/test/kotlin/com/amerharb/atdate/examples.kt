@@ -33,4 +33,15 @@ object Examples {
         plusLeapSeconds = null,
         minusLeapSeconds = null,
     )
+
+    val example5 = Period(
+        sign = true,
+        rangeLevel = RangeLevel.Level1,
+        resolutionLevel = ResolutionLevel.Level0,
+        leapSecondsFlag = 0U,
+        date = 1U,
+        time = null,
+        plusLeapSeconds = null,
+        minusLeapSeconds = null,
+    )
 }
