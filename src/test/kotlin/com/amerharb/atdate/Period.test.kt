@@ -23,4 +23,20 @@ class TestPeriod {
         assertEquals(expected, actual)
     }
 
+    @Test
+    @OptIn(ExperimentalUnsignedTypes::class)
+    fun testGetPayloadExample5() {
+        // 0xa0
+        val expected = ubyteArrayOf(0xa0U).toTypedArray()
+        val actual = example5.getPayload()
+        assertContentEquals(expected, actual)
+    }
+
+    @Test
+    fun testGetNotationExample5() {
+        val expected = "@P-tp@"
+        val actual = example5.getNotation()
+        assertEquals(expected, actual)
+    }
+
 }

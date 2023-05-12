@@ -85,9 +85,34 @@ class TestEncodePeriod {
         val expected = Examples.example4
         assertEquals(expected, actual)
     }
+//example tiny period
+    @Test
+    fun example5() {
+        val input = "@P-tp@"
+        val actual = encodePeriod(input)
+        val expected = Examples.example5
+        assertEquals(expected, actual)
+    }
 
     @Test
     fun case1() {
+        val input = "@P-1DT00:00:02@"
+        val actual = encodePeriod(input)
+        val expected = Period(
+            sign = false,
+            rangeLevel = RangeLevel.Level1,
+            resolutionLevel = ResolutionLevel.Level5,
+            leapSecondsFlag = 0U,
+            date = 1U,
+            time = 2U,
+            plusLeapSeconds = null,
+            minusLeapSeconds = null,
+        )
+        assertEquals(expected, actual)
+    }
+
+    @Test
+    fun case2() {
         val input = "@P-1DT00:00:02@"
         val actual = encodePeriod(input)
         val expected = Period(
