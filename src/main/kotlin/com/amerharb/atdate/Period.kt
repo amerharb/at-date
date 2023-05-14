@@ -201,6 +201,8 @@ data class Period(
     private fun getLeapSecondsBitCount(): Int = getLeapSecondsBitCount(this.leapSecondsFlag)
 
     companion object {
+        fun getPositiveTinyPeriod() = getTinyPeriod(true)
+        fun getNegativeTinyPeriod() = getTinyPeriod(false)
         private fun getTinyPeriod(sign: Boolean): Period {
             return Period(
                 sign = sign,
@@ -213,9 +215,6 @@ data class Period(
                 minusLeapSeconds = null,
             )
         }
-
-        fun getPositiveTinyPeriod() = getTinyPeriod(true)
-        fun getNegativeTinyPeriod() = getTinyPeriod(false)
     }
 }
 

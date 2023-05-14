@@ -170,7 +170,7 @@ fun decodePeriod(input: Array<UByte>): Period {
     require(input.isNotEmpty()) { "Input can not be empty" }
     if (input[0] == 0b1000_0000U.toUByte()) {
         return Period.getPositiveTinyPeriod()
-    } else if (input[0]  == 0b1010_0000U.toUByte()) {
+    } else if (input[0] == 0b1010_0000U.toUByte()) {
         return Period.getNegativeTinyPeriod()
     }
     // takes input array of UByte then returns an AtDate object

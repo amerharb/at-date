@@ -313,8 +313,8 @@ private fun getSuitableRangeLevelForMoment(jdn: Long): RangeLevel {
 }
 
 private fun getSuitableRangeLevelForPeriod(day: Long): RangeLevel {
-    return when (day.absoluteValue){
-        in 0 ..  0x7FFF -> RangeLevel.Level1
+    return when (day.absoluteValue) {
+        in 0..0x7FFF -> RangeLevel.Level1
         in 0..0x3FFFFF -> RangeLevel.Level2
         in 0..0xFFFFFFFF -> RangeLevel.Level3
         in 0..0xFFFFFFFFFFFF -> RangeLevel.Level4

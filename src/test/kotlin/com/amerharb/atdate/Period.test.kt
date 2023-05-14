@@ -38,5 +38,4 @@ class TestPeriod {
         val actual = example5.getNotation()
         assertEquals(expected, actual)
     }
-
 }

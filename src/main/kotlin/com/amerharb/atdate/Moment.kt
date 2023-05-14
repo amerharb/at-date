@@ -11,7 +11,7 @@ data class Moment(
     val zone: ULong? = null,
     val plusLeapSeconds: ULong? = null,
     val minusLeapSeconds: ULong? = null,
-): AtDate() {
+) : AtDate() {
     override fun getNotation(): String {
         val notation = StringBuilder()
         notation.append("@")
@@ -82,11 +82,6 @@ data class Moment(
 
         // how many bytes in body
         val bodyBitCount = getBodyBitCount()
-        val bodyByteCount = if (bodyBitCount % 8 == 0) {
-            bodyBitCount / 8
-        } else {
-            bodyBitCount / 8 + 1
-        }
 
         // TODO: support body longer than 8 bytes
         val bodyList = mutableListOf<UByte>()
