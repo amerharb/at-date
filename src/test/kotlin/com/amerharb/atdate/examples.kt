@@ -35,11 +35,11 @@ object Examples {
     )
 
     val example5 = Period(
-        sign = true,
-        rangeLevel = RangeLevel.Level1,
+        sign = false,
+        rangeLevel = RangeLevel.Level0,
         resolutionLevel = ResolutionLevel.Level0,
         leapSecondsFlag = 0U,
-        date = 1U,
+        date = null,
         time = null,
         plusLeapSeconds = null,
         minusLeapSeconds = null,
