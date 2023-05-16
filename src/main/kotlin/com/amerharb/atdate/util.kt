@@ -55,10 +55,3 @@ fun getZoneBitCount(zoneLevel: ZoneLevel): Int {
 fun getLeapSecondsBitCount(leapSecondsFlag: UByte): Int {
     return leapSecondsFlag.toInt() * 8 * 2
 }
-
-fun getBodyBitCount(atMomentHeader: AtMomentHeader): Int {
-    return getRangeBitCount(atMomentHeader.rangeLevel) +
-        getResolutionBitCount(atMomentHeader.resolutionLevel) +
-        getZoneBitCount(atMomentHeader.zoneLevel) +
-        getLeapSecondsBitCount(atMomentHeader.leapSecondsFlag)
-}
