@@ -67,6 +67,12 @@ Exiting with status 0
 Process finished with exit code 0
 ```
 
+## Future Work
+- Cover Arithmetic and Logical operations.
+- Encode/decode date-time with level or resolution above 15: The code in Kotlin uses a variable of kind ULong which is only 8 bytes long. A different kind of coding should be used, maybe Array of UByte.
+- Enhance Unit test in implementation.
+- Website to demonstrate the design.
+
 ## License
 
 This project is licensed under the [ISC License](LICENSE).
