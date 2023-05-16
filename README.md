@@ -42,7 +42,7 @@ To run the unit tests, follow these steps:
 ```shell
 @Date
 input: 
-enter @Date to encode, 0x... to decode or Q to Quit
+enter @...@ to encode, 0x... to decode or Q to Quit
 >@2019-05-05@
 Hex: 0xc007e2
 Bin: 0b110000000000011111100010
