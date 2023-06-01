@@ -1,3 +1,3 @@
 
-rootProject.name = "at-datetime"
+rootProject.name = "at-date"
 
