@@ -33,13 +33,23 @@ object Examples {
         plusLeapSeconds = null,
         minusLeapSeconds = null,
     )
-
     val example5 = Period(
         sign = false,
         rangeLevel = RangeLevel.Level0,
         resolutionLevel = ResolutionLevel.Level0,
         leapSecondsFlag = 0U,
         date = null,
+        time = null,
+        plusLeapSeconds = null,
+        minusLeapSeconds = null,
+    )
+    // minus 1 day period
+    val example6 = Period(
+        sign = false,
+        rangeLevel = RangeLevel.Level1,
+        resolutionLevel = ResolutionLevel.Level0,
+        leapSecondsFlag = 0U,
+        date = 1U,
         time = null,
         plusLeapSeconds = null,
         minusLeapSeconds = null,
