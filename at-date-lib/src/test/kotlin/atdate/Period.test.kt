@@ -43,7 +43,7 @@ class TestPeriod {
     @OptIn(ExperimentalUnsignedTypes::class)
     @Test
     fun testGetPayloadExample6() {
-        // 0x880002
+        // 0xA80002
         val expected = ubyteArrayOf(0xA8U, 0x00U, 0x02U).toTypedArray()
         val actual = example6.getPayload()
         assertContentEquals(expected, actual)
