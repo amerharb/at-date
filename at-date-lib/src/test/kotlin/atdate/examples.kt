@@ -43,7 +43,14 @@ object Examples {
         plusLeapSeconds = null,
         minusLeapSeconds = null,
     )
-    // minus 1 day period
+
+    /**
+     * minus 1 day period
+     * Not: @P-1D { d:1 t:0 l:0-0 }@
+     * Hex: 0xA80002
+     * Bin: 1010 1000 0000 0000 0000 0010
+     * Exp: IKSD DTTT <----- date ----->P
+     */
     val example6 = Period(
         sign = false,
         rangeLevel = RangeLevel.Level1,
