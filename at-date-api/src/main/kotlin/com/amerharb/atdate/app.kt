@@ -1,5 +1,5 @@
-import com.amerharb.atdate.decode
-import com.amerharb.atdate.encode
+package com.amerharb.atdate
+
 import io.ktor.server.application.*
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
@@ -25,12 +25,7 @@ fun Application.module() {
                 return@post
             }
             val ad = encode(notation)
-            if (ad == null) {
-                call.respondText("Notation is invalid")
-            } else {
-                //TODO: return json
-                call.respondText(ad.toString())
-            }
+            call.respondText(ad.getHex())
         }
 
         post("/decode/{hex}") {
@@ -39,11 +34,9 @@ fun Application.module() {
                 call.respondText("Hex is null")
                 return@post
             }
-            // convert hex text into Array[UByte]
             val bArray = getUByteArray(hex)
             val ad = decode(bArray)
-            //TODO: return json
-            call.respondText(ad.toString())
+            call.respondText(ad.getNotation())
         }
     }
 }
@@ -55,4 +48,11 @@ fun getUByteArray(hex: String): Array<UByte> {
         .chunked(2)
         .map { it.toInt(16).toUByte() }
     return byteList.toTypedArray()
+}
+
+fun AtDate.getHex(): String {
+    val hexList = this.getPayload()
+        .map { it.toString(16) }
+        .map { if (it.length == 1) "0$it" else it }
+    return "0x${hexList.joinToString("")}"
 }
