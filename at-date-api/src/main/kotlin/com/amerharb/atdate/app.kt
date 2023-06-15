@@ -1,10 +1,12 @@
 package com.amerharb.atdate
 
+import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import java.util.*
 
 const val PORT = 8000
 
@@ -24,8 +26,43 @@ fun Application.module() {
                 call.respondText("Notation is null")
                 return@post
             }
+            // if encoding throw error respond with error
+            try {
+                val ad = encode(notation)
+
+                val res = """
+                    hex: ${ad.getHex()}
+                    base64: ${ad.getBase64()}
+            """.trimIndent()
+                call.respondText(res)
+            } catch (e: Exception) {
+                call.respondText(
+                    text = e.message ?: "Error",
+                    contentType = ContentType.Text.Plain,
+                    status = HttpStatusCode.InternalServerError,
+                )
+                return@post
+            }
+        }
+
+        post("/encode/{notation}/hex") {
+            val notation = call.parameters["notation"]
+            if (notation == null) {
+                call.respondText("Notation is null")
+                return@post
+            }
             val ad = encode(notation)
             call.respondText(ad.getHex())
+        }
+
+        post("/encode/{notation}/base64") {
+            val notation = call.parameters["notation"]
+            if (notation == null) {
+                call.respondText("Notation is null")
+                return@post
+            }
+            val ad = encode(notation)
+            call.respondText(ad.getBase64())
         }
 
         post("/decode/{hex}") {
@@ -51,8 +88,12 @@ fun getUByteArray(hex: String): Array<UByte> {
 }
 
 fun AtDate.getHex(): String {
-    val hexList = this.getPayload()
-        .map { it.toString(16) }
-        .map { if (it.length == 1) "0$it" else it }
+    val hexList = this.getPayload().map { it.toString(16).padStart(2, '0') }
     return "0x${hexList.joinToString("")}"
+}
+
+fun AtDate.getBase64(): String {
+    val byteList: List<Byte> = this.getPayload().map { it.toByte() }
+    val byteArr: ByteArray = byteList.toByteArray()
+    return Base64.getEncoder().encodeToString(byteArr)
 }
