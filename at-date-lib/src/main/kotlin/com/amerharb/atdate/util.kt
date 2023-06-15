@@ -1,6 +1,6 @@
 package com.amerharb.atdate
 
-fun getRangeBitCount(rangeLevel: RangeLevel): Int {
+internal fun getRangeBitCount(rangeLevel: RangeLevel): Int {
     return when (rangeLevel) {
         RangeLevel.Level0 -> 0
         RangeLevel.Level1 -> 15
@@ -10,7 +10,7 @@ fun getRangeBitCount(rangeLevel: RangeLevel): Int {
     }
 }
 
-fun getResolutionBitCount(resolutionLevel: ResolutionLevel): Int {
+internal fun getResolutionBitCount(resolutionLevel: ResolutionLevel): Int {
     return when (resolutionLevel) {
         ResolutionLevel.Level0 -> 0
         ResolutionLevel.Level1 -> 5
@@ -36,7 +36,7 @@ fun getResolutionBitCount(resolutionLevel: ResolutionLevel): Int {
     }
 }
 
-fun getZoneBitCount(zoneLevel: ZoneLevel): Int {
+internal fun getZoneBitCount(zoneLevel: ZoneLevel): Int {
     return when (zoneLevel) {
         ZoneLevel.Level0 -> 0
         ZoneLevel.Level1 -> 7
@@ -52,6 +52,6 @@ fun getZoneBitCount(zoneLevel: ZoneLevel): Int {
     }
 }
 
-fun getLeapSecondsBitCount(leapSecondsFlag: UByte): Int {
+internal fun getLeapSecondsBitCount(leapSecondsFlag: UByte): Int {
     return leapSecondsFlag.toInt() * 8 * 2
 }

@@ -1,5 +1,6 @@
 plugins {
     kotlin("jvm") version "1.8.0"
+    application
 }
 
 group = "com.amerharb.atdate"
@@ -10,5 +11,10 @@ repositories {
 }
 
 dependencies {
+    implementation(project(":at-date-lib"))
     testImplementation(kotlin("test"))
+}
+
+application {
+    mainClass.set("MainKt")
 }

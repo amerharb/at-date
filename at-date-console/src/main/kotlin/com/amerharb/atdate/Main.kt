@@ -94,11 +94,14 @@ fun getByteArrayFromHexString(hexString: String): Array<UByte> {
 }
 
 fun printHelp() {
-    println("for encoding a date use @Date format")
-    println("Usage: atdate [@ISO-Date {properties}@]")
-    println("Example: atdate @2019-05-05 {d:1}@")
-    println()
-    println("for decoding a date use hexadecimal format")
-    println("Usage: atdate [0x....]")
-    println("Example: atdate 0xC007E2")
+    println(
+        """for encoding a date use @Date format
+Usage: atdate [@ISO-Date {properties}@]
+Example: atdate @2019-05-05 {d:1}@
+
+for decoding a date use hexadecimal format
+Usage: atdate [0x....]
+Example: atdate 0xC007E2
+"""
+    )
 }

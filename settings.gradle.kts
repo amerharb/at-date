@@ -1,3 +1,4 @@
 
-rootProject.name = "at-datetime"
-
+rootProject.name = "at-date"
+include("at-date-lib")
+include("at-date-console")

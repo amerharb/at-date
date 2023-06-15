@@ -104,7 +104,7 @@ data class Period(
     private fun getPeriodHeader1Byte(): Array<UByte> {
         /** header design IKSDDTTT */
         var header: UByte = 0U
-        header = header or 0b1000_0000U // I
+        header = header or 0b1000_0000U // I (always 1 for 1 byte header)
         header = header and 0b1011_1111U // K (always 0 for Period)
         if (!sign) header = header or 0b0010_0000U // S
         header = when (rangeLevel) { // D
