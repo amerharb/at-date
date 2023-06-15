@@ -65,25 +65,41 @@ fun Application.module() {
             call.respondText(ad.getBase64())
         }
 
-        post("/decode/{hex}") {
+        post("/decode/hex/{hex}") {
             val hex = call.parameters["hex"]
             if (hex == null) {
                 call.respondText("Hex is null")
                 return@post
             }
-            val bArray = getUByteArray(hex)
+            val bArray = getUByteArrayFromHex(hex)
+            val ad = decode(bArray)
+            call.respondText(ad.getNotation())
+        }
+
+        post("/decode/base64/{base64}") {
+            val base64 = call.parameters["base64"]
+            if (base64 == null) {
+                call.respondText("Base64 is null")
+                return@post
+            }
+            val bArray = getUByteArrayFromBase64(base64)
             val ad = decode(bArray)
             call.respondText(ad.getNotation())
         }
     }
 }
 
-fun getUByteArray(hex: String): Array<UByte> {
-    // convert hex start with 0x into Array[UByte]
+fun getUByteArrayFromHex(hex: String): Array<UByte> {
     val byteList = hex
         .drop(2)
         .chunked(2)
         .map { it.toInt(16).toUByte() }
+    return byteList.toTypedArray()
+}
+
+fun getUByteArrayFromBase64(base64: String): Array<UByte> {
+    val byteList = Base64.getDecoder().decode(base64)
+        .map { it.toUByte() }
     return byteList.toTypedArray()
 }
 
