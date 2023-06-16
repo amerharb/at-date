@@ -84,8 +84,8 @@ fun Application.module() {
 
         get("/decode/hex/{hex}") {
             val hex = call.parameters["hex"]
-            if (hex == null) {
-                call.respondText("Hex is null")
+            if (hex.isNullOrBlank()) {
+                call.respondText(text = "Hex is empty", status = HttpStatusCode.BadRequest)
                 return@get
             }
             val bArray = getUByteArrayFromHex(hex)
@@ -95,8 +95,8 @@ fun Application.module() {
 
         get("/decode/base64/{base64}") {
             val base64 = call.parameters["base64"]
-            if (base64 == null) {
-                call.respondText("Base64 is null")
+            if (base64.isNullOrBlank()) {
+                call.respondText(text = "Base64 is empty", status = HttpStatusCode.BadRequest)
                 return@get
             }
             val bArray = getUByteArrayFromBase64(base64)
