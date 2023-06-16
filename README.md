@@ -4,10 +4,16 @@
 [![Kotlin](https://img.shields.io/badge/Kotlin-1.8.0-blue.svg)](https://kotlinlang.org/)
 [![Gradle](https://img.shields.io/badge/Gradle-7.4.2-blue.svg)](https://gradle.org/)
 
-This project is a multi modules for @Date. The poject includes the following modules:
-- @Date Kotlin Library
-- @Date Kotlin Console Application
-- @Date Kotlin Web Api Application
+This project is a multi modules for @Date. 
+The project is a proof of concept for the design part of thesis project ["Date-Time Data Type Problem and Vision"](https://researchportal.hkr.se/ws/portalfiles/portal/63119028/Date_Time_Data_Type_Problem_and_Vision.pdf) published at [Kristianstad University](https://researchportal.hkr.se/sv/studentTheses/problems-and-vision-for-date-time-data-type).
+
+The project includes the following modules:
+- @Date root module (at-date)
+- @Date Library (at-date-lib)
+- @Date Console Application (at-date-console)
+- @Date Web Api (at-date-api)
+
+![dep.png](doc/dep.png)
 
 ## @Date Kotlin Library (at-date-lib)
 ### Overview
@@ -153,4 +159,4 @@ GET /decode/base64/wAfi
 - Website to demonstrate the design.
 
 ## License
-This project is licensed under the [ISC License](https://opensource.org/licenses/ISC).
+This project is licensed under the [ISC License](LICENSE).

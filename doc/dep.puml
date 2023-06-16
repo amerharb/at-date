@@ -1,0 +1,15 @@
+@startuml
+skinparam object {
+  BorderColor transparent
+  BackGroundColor lightblue
+    ArrowColor blue
+}
+skinparam BackGroundColor transparent
+
+object "at-date-console" as atDateConsole
+object "at-date-api" as atDateApi
+object "at-date-lib" as atDateLib
+
+atDateConsole --> atDateLib
+atDateApi --> atDateLib
+@enduml
