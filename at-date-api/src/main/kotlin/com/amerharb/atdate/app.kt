@@ -89,8 +89,17 @@ fun Application.module() {
                 return@get
             }
             val bArray = getUByteArrayFromHex(hex)
-            val ad = decode(bArray)
-            call.respondText(ad.getNotation())
+            try { // if decoding throw error respond with 500
+                val ad = decode(bArray)
+                call.respondText(ad.getNotation())
+            } catch (e: Exception) {
+                call.respondText(
+                    text = e.message ?: "Error",
+                    contentType = ContentType.Text.Plain,
+                    status = HttpStatusCode.InternalServerError,
+                )
+                return@get
+            }
         }
 
         get("/decode/base64/{base64}") {
@@ -100,8 +109,17 @@ fun Application.module() {
                 return@get
             }
             val bArray = getUByteArrayFromBase64(base64)
-            val ad = decode(bArray)
-            call.respondText(ad.getNotation())
+            try { // if decoding throw error respond with 500
+                val ad = decode(bArray)
+                call.respondText(ad.getNotation())
+            } catch (e: Exception) {
+                call.respondText(
+                    text = e.message ?: "Error",
+                    contentType = ContentType.Text.Plain,
+                    status = HttpStatusCode.InternalServerError,
+                )
+                return@get
+            }
         }
     }
 }
