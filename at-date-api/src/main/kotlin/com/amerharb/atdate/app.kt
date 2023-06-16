@@ -17,108 +17,47 @@ fun main() {
 fun Application.module() {
     routing {
         get("/") {
-            call.respondText("Hello, world!")
+            call.respondText("Hello! I am @Date")
         }
 
         get("/encode/{notation}") {
-            val notation = call.parameters["notation"]
-            if (notation.isNullOrBlank()) {
-                call.respondText(text = "Notation is empty", status = HttpStatusCode.BadRequest)
-                return@get
-            }
-            try { // if encoding throw error respond with 500
-                val ad = encode(notation)
-
+            call.paramOrBadRequest("notation") {
+                val ad = encode(it)
                 val res = """
                     hex: ${ad.getHex()}
                     base64: ${ad.getBase64()}
-            """.trimIndent()
+                    """.trimIndent()
                 call.respondText(res)
-            } catch (e: Exception) {
-                call.respondText(
-                    text = e.message ?: "Error",
-                    contentType = ContentType.Text.Plain,
-                    status = HttpStatusCode.InternalServerError,
-                )
-                return@get
             }
         }
 
         get("/encode/{notation}/hex") {
-            val notation = call.parameters["notation"]
-            if (notation.isNullOrBlank()) {
-                call.respondText(text = "Notation is empty", status = HttpStatusCode.BadRequest)
-                return@get
-            }
-            try { // if encoding throw error respond with 500
-                val ad = encode(notation)
-                call.respondText(ad.getHex())
-            } catch (e: Exception) {
-                call.respondText(
-                    text = e.message ?: "Error",
-                    contentType = ContentType.Text.Plain,
-                    status = HttpStatusCode.InternalServerError,
-                )
-                return@get
+            call.paramOrBadRequest("notation") {
+                val ad = encode(it)
+                call.respondText { ad.getHex() }
             }
         }
 
         get("/encode/{notation}/base64") {
-            val notation = call.parameters["notation"]
-            if (notation.isNullOrBlank()) {
-                call.respondText(text = "Notation is empty", status = HttpStatusCode.BadRequest)
-                return@get
-            }
-            try { // if encoding throw error respond with 500
-                val ad = encode(notation)
+            call.paramOrBadRequest("notation") {
+                val ad = encode(it)
                 call.respondText(ad.getBase64())
-            } catch (e: Exception) {
-                call.respondText(
-                    text = e.message ?: "Error",
-                    contentType = ContentType.Text.Plain,
-                    status = HttpStatusCode.InternalServerError,
-                )
-                return@get
             }
         }
 
         get("/decode/hex/{hex}") {
-            val hex = call.parameters["hex"]
-            if (hex.isNullOrBlank()) {
-                call.respondText(text = "Hex is empty", status = HttpStatusCode.BadRequest)
-                return@get
-            }
-            val bArray = getUByteArrayFromHex(hex)
-            try { // if decoding throw error respond with 500
+            call.paramOrBadRequest("hex") {
+                val bArray = getUByteArrayFromHex(it)
                 val ad = decode(bArray)
                 call.respondText(ad.getNotation())
-            } catch (e: Exception) {
-                call.respondText(
-                    text = e.message ?: "Error",
-                    contentType = ContentType.Text.Plain,
-                    status = HttpStatusCode.InternalServerError,
-                )
-                return@get
             }
         }
 
         get("/decode/base64/{base64}") {
-            val base64 = call.parameters["base64"]
-            if (base64.isNullOrBlank()) {
-                call.respondText(text = "Base64 is empty", status = HttpStatusCode.BadRequest)
-                return@get
-            }
-            val bArray = getUByteArrayFromBase64(base64)
-            try { // if decoding throw error respond with 500
+            call.paramOrBadRequest("base64") {
+                val bArray = getUByteArrayFromBase64(it)
                 val ad = decode(bArray)
                 call.respondText(ad.getNotation())
-            } catch (e: Exception) {
-                call.respondText(
-                    text = e.message ?: "Error",
-                    contentType = ContentType.Text.Plain,
-                    status = HttpStatusCode.InternalServerError,
-                )
-                return@get
             }
         }
     }
@@ -147,4 +86,26 @@ fun AtDate.getBase64(): String {
     val byteList: List<Byte> = this.getPayload().map { it.toByte() }
     val byteArr: ByteArray = byteList.toByteArray()
     return Base64.getEncoder().encodeToString(byteArr)
+}
+
+/**
+ * check if param is existed then execute action,
+ * otherwise return BadRequest 400 if param is Blank or Null
+ * or return InternalServerError 500 if action throw exception
+ */
+suspend fun ApplicationCall.paramOrBadRequest(name: String, action: suspend (String) -> Unit) {
+    val param = parameters[name]
+    if (param.isNullOrBlank()) {
+        respondText("$name is empty", status = HttpStatusCode.BadRequest)
+    } else {
+        try {
+            action(param)
+        } catch (e: Exception) {
+            respondText(
+                text = e.message ?: "Error",
+                contentType = ContentType.Text.Plain,
+                status = HttpStatusCode.InternalServerError,
+            )
+        }
+    }
 }
