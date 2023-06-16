@@ -153,4 +153,4 @@ GET /decode/base64/wAfi
 - Website to demonstrate the design.
 
 ## License
-This project is licensed under the [ISC License](LICENSE).
+This project is licensed under the [ISC License](https://opensource.org/licenses/ISC).
