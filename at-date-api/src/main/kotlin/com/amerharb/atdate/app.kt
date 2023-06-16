@@ -26,8 +26,7 @@ fun Application.module() {
                 call.respondText(text = "Notation is empty", status = HttpStatusCode.BadRequest)
                 return@get
             }
-            // if encoding throw error respond with error
-            try {
+            try { // if encoding throw error respond with 500
                 val ad = encode(notation)
 
                 val res = """
@@ -51,8 +50,17 @@ fun Application.module() {
                 call.respondText(text = "Notation is empty", status = HttpStatusCode.BadRequest)
                 return@get
             }
-            val ad = encode(notation)
-            call.respondText(ad.getHex())
+            try { // if encoding throw error respond with 500
+                val ad = encode(notation)
+                call.respondText(ad.getHex())
+            } catch (e: Exception) {
+                call.respondText(
+                    text = e.message ?: "Error",
+                    contentType = ContentType.Text.Plain,
+                    status = HttpStatusCode.InternalServerError,
+                )
+                return@get
+            }
         }
 
         get("/encode/{notation}/base64") {
@@ -61,8 +69,17 @@ fun Application.module() {
                 call.respondText(text = "Notation is empty", status = HttpStatusCode.BadRequest)
                 return@get
             }
-            val ad = encode(notation)
-            call.respondText(ad.getBase64())
+            try { // if encoding throw error respond with 500
+                val ad = encode(notation)
+                call.respondText(ad.getBase64())
+            } catch (e: Exception) {
+                call.respondText(
+                    text = e.message ?: "Error",
+                    contentType = ContentType.Text.Plain,
+                    status = HttpStatusCode.InternalServerError,
+                )
+                return@get
+            }
         }
 
         get("/decode/hex/{hex}") {
