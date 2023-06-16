@@ -22,8 +22,8 @@ fun Application.module() {
 
         post("/encode/{notation}") {
             val notation = call.parameters["notation"]
-            if (notation == null) {
-                call.respondText("Notation is null")
+            if (notation.isNullOrBlank()) {
+                call.respondText(text = "Notation is empty", status = HttpStatusCode.BadRequest)
                 return@post
             }
             // if encoding throw error respond with error
@@ -47,8 +47,8 @@ fun Application.module() {
 
         post("/encode/{notation}/hex") {
             val notation = call.parameters["notation"]
-            if (notation == null) {
-                call.respondText("Notation is null")
+            if (notation.isNullOrBlank()) {
+                call.respondText(text = "Notation is empty", status = HttpStatusCode.BadRequest)
                 return@post
             }
             val ad = encode(notation)
@@ -57,8 +57,8 @@ fun Application.module() {
 
         post("/encode/{notation}/base64") {
             val notation = call.parameters["notation"]
-            if (notation == null) {
-                call.respondText("Notation is null")
+            if (notation.isNullOrBlank()) {
+                call.respondText(text = "Notation is empty", status = HttpStatusCode.BadRequest)
                 return@post
             }
             val ad = encode(notation)
