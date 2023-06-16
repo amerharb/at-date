@@ -96,7 +96,7 @@ Process finished with exit code 0
 Provide endpoints that encode and decode Moment and Period notations to/from hexadecimal or base64.
 
 ### endpoints
-- `POST /encode/{notation}` to encode Moment or Period notation to hexadecimal.
+- `GET /encode/{notation}` to encode Moment or Period notation to hexadecimal.
 it returns:
 ``` 
 hex: 0x......
@@ -104,44 +104,44 @@ base64: ......
 ```
 example:
 ``` HTTP
-POST /encode/@2019-05-05@
+GET /encode/@2019-05-05@
 
 hex: 0xc007e2
 base64: wAfi
 ```
 
-- `POST /encode/{notation}/hex` to encode Moment or Period notation to hex.
+- `GET /encode/{notation}/hex` to encode Moment or Period notation to hex.
 
 example:
 ``` HTTP
-POST /encode/@2019-05-05@/hex
+GET /encode/@2019-05-05@/hex
 
 0xc007e2
 ```
 
-- `POST /encode/{notation}/base64` to encode Moment or Period notation to base64.
+- `GET /encode/{notation}/base64` to encode Moment or Period notation to base64.
 
 example:
 ``` HTTP
-POST /encode/@2019-05-05@/base64
+GET /encode/@2019-05-05@/base64
 
 wAfi
 ```
 
-- `POST /decode/hex/{hex}` to decode hexadecimal to Moment or Period notation.
+- `GET /decode/hex/{hex}` to decode hexadecimal to Moment or Period notation.
 
 example:
 ``` HTTP
-POST /decode/hex/0xc007e2
+GET /decode/hex/0xc007e2
 
 @2019-05-05 { d:1 t:0 z:0 a:s l:0-0 }@
 ```
 
-- `POST /decode/base64/{base64}` to decode base64 to Moment or Period notation.
+- `GET /decode/base64/{base64}` to decode base64 to Moment or Period notation.
 
 example:
 ``` HTTP
-POST /decode/base64/wAfi
+GET /decode/base64/wAfi
 
 @2019-05-05 { d:1 t:0 z:0 a:s l:0-0 }@
 ```

@@ -20,11 +20,11 @@ fun Application.module() {
             call.respondText("Hello, world!")
         }
 
-        post("/encode/{notation}") {
+        get("/encode/{notation}") {
             val notation = call.parameters["notation"]
             if (notation.isNullOrBlank()) {
                 call.respondText(text = "Notation is empty", status = HttpStatusCode.BadRequest)
-                return@post
+                return@get
             }
             // if encoding throw error respond with error
             try {
@@ -41,46 +41,46 @@ fun Application.module() {
                     contentType = ContentType.Text.Plain,
                     status = HttpStatusCode.InternalServerError,
                 )
-                return@post
+                return@get
             }
         }
 
-        post("/encode/{notation}/hex") {
+        get("/encode/{notation}/hex") {
             val notation = call.parameters["notation"]
             if (notation.isNullOrBlank()) {
                 call.respondText(text = "Notation is empty", status = HttpStatusCode.BadRequest)
-                return@post
+                return@get
             }
             val ad = encode(notation)
             call.respondText(ad.getHex())
         }
 
-        post("/encode/{notation}/base64") {
+        get("/encode/{notation}/base64") {
             val notation = call.parameters["notation"]
             if (notation.isNullOrBlank()) {
                 call.respondText(text = "Notation is empty", status = HttpStatusCode.BadRequest)
-                return@post
+                return@get
             }
             val ad = encode(notation)
             call.respondText(ad.getBase64())
         }
 
-        post("/decode/hex/{hex}") {
+        get("/decode/hex/{hex}") {
             val hex = call.parameters["hex"]
             if (hex == null) {
                 call.respondText("Hex is null")
-                return@post
+                return@get
             }
             val bArray = getUByteArrayFromHex(hex)
             val ad = decode(bArray)
             call.respondText(ad.getNotation())
         }
 
-        post("/decode/base64/{base64}") {
+        get("/decode/base64/{base64}") {
             val base64 = call.parameters["base64"]
             if (base64 == null) {
                 call.respondText("Base64 is null")
-                return@post
+                return@get
             }
             val bArray = getUByteArrayFromBase64(base64)
             val ad = decode(bArray)
