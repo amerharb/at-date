@@ -1,0 +1,6 @@
+# Top-most EditorConfig file
+root = true
+
+[*.{kt,kts}]
+indent_style = tab
+indent_size = 4
