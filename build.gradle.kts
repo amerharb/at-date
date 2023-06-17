@@ -15,3 +15,15 @@ ktlint {
 	outputToConsole.set(true)
 	coloredOutput.set(true)
 }
+
+subprojects {
+	apply(plugin = "org.jlleitschuh.gradle.ktlint")
+
+	repositories {
+		mavenCentral()
+	}
+
+	configure<org.jlleitschuh.gradle.ktlint.KtlintExtension> {
+		debug.set(true)
+	}
+}

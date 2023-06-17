@@ -1,6 +1,5 @@
 plugins {
 	kotlin("jvm") version "1.8.0"
-	id("org.jlleitschuh.gradle.ktlint") version "11.4.0"
 }
 
 group = "com.amerharb.atdate"
@@ -16,10 +15,4 @@ dependencies {
 	implementation("io.ktor:ktor-server-netty:$ktor_version")
 	implementation("io.ktor:ktor-server-core:$ktor_version")
 	implementation("ch.qos.logback:logback-classic:1.2.9")
-}
-
-ktlint {
-	verbose.set(true)
-	outputToConsole.set(true)
-	coloredOutput.set(true)
 }
