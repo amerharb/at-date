@@ -47,6 +47,10 @@ fun Application.module() {
 
         get("/decode/hex/{hex}") {
             call.paramOrBadRequest("hex") {
+                if (!isValidHex(it)) {
+                    call.respondText("Invalid hex input", status = HttpStatusCode.BadRequest)
+                    return@paramOrBadRequest
+                }
                 val bArray = getUByteArrayFromHex(it)
                 val ad = decode(bArray)
                 call.respondText(ad.getNotation())
@@ -55,6 +59,10 @@ fun Application.module() {
 
         get("/decode/base64/{base64}") {
             call.paramOrBadRequest("base64") {
+                if (!isValidBase64(it)) {
+                    call.respondText("Invalid base64 input", status = HttpStatusCode.BadRequest)
+                    return@paramOrBadRequest
+                }
                 val bArray = getUByteArrayFromBase64(it)
                 val ad = decode(bArray)
                 call.respondText(ad.getNotation())
@@ -63,12 +71,22 @@ fun Application.module() {
     }
 }
 
+private fun isValidHex(hex: String): Boolean {
+    val regex = Regex("^0x[0-9a-fA-F]{4,}$")
+    return regex.matches(hex) && hex.length % 2 == 0
+}
+
 private fun getUByteArrayFromHex(hex: String): Array<UByte> {
     val byteList = hex
-        .drop(2)
-        .chunked(2)
-        .map { it.toInt(16).toUByte() }
+        .drop(2) // remove "0x" from input
+        .chunked(2) // split into 2 chars where each chunk is a byte
+        .map { it.toInt(16).toUByte() } // convert each chunk to UByte
     return byteList.toTypedArray()
+}
+
+private fun isValidBase64(base64: String): Boolean {
+    val regex = Regex("^[0-9a-zA-Z+/]+={0,3}$")
+    return regex.matches(base64) && base64.length % 4 == 0
 }
 
 private fun getUByteArrayFromBase64(base64: String): Array<UByte> {
@@ -93,10 +111,10 @@ private fun AtDate.getBase64(): String {
  * otherwise return BadRequest 400 if param is Blank or Null
  * or return InternalServerError 500 if action throw exception
  */
-private suspend fun ApplicationCall.paramOrBadRequest(name: String, action: suspend (String) -> Unit) {
-    val param = parameters[name]
+private suspend fun ApplicationCall.paramOrBadRequest(paramName: String, action: suspend (String) -> Unit) {
+    val param = parameters[paramName]
     if (param.isNullOrBlank()) {
-        respondText("$name is empty", status = HttpStatusCode.BadRequest)
+        respondText("$param is empty", status = HttpStatusCode.BadRequest)
     } else {
         try {
             action(param)
