@@ -63,7 +63,7 @@ fun Application.module() {
     }
 }
 
-fun getUByteArrayFromHex(hex: String): Array<UByte> {
+private fun getUByteArrayFromHex(hex: String): Array<UByte> {
     val byteList = hex
         .drop(2)
         .chunked(2)
@@ -71,18 +71,18 @@ fun getUByteArrayFromHex(hex: String): Array<UByte> {
     return byteList.toTypedArray()
 }
 
-fun getUByteArrayFromBase64(base64: String): Array<UByte> {
+private fun getUByteArrayFromBase64(base64: String): Array<UByte> {
     val byteList = Base64.getDecoder().decode(base64)
         .map { it.toUByte() }
     return byteList.toTypedArray()
 }
 
-fun AtDate.getHex(): String {
+private fun AtDate.getHex(): String {
     val hexList = this.getPayload().map { it.toString(16).padStart(2, '0') }
     return "0x${hexList.joinToString("")}"
 }
 
-fun AtDate.getBase64(): String {
+private fun AtDate.getBase64(): String {
     val byteList: List<Byte> = this.getPayload().map { it.toByte() }
     val byteArr: ByteArray = byteList.toByteArray()
     return Base64.getEncoder().encodeToString(byteArr)
@@ -93,7 +93,7 @@ fun AtDate.getBase64(): String {
  * otherwise return BadRequest 400 if param is Blank or Null
  * or return InternalServerError 500 if action throw exception
  */
-suspend fun ApplicationCall.paramOrBadRequest(name: String, action: suspend (String) -> Unit) {
+private suspend fun ApplicationCall.paramOrBadRequest(name: String, action: suspend (String) -> Unit) {
     val param = parameters[name]
     if (param.isNullOrBlank()) {
         respondText("$name is empty", status = HttpStatusCode.BadRequest)
