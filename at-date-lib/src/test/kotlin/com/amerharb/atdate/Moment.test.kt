@@ -24,7 +24,6 @@ class MomentTest {
 	}
 
 	@Test
-	@OptIn(ExperimentalUnsignedTypes::class)
 	fun testGetNotationExample1() {
 		val expected = "@2019-05-05 { d:1 t:0 z:0 a:s l:0-0 }@"
 		val actual = Examples.example1.getNotation()
@@ -32,7 +31,6 @@ class MomentTest {
 	}
 
 	@Test
-	@OptIn(ExperimentalUnsignedTypes::class)
 	fun testGetNotationExample2() {
 		val expected = "@2019-05-05T19:53:00+02:00 { d:1 t:5 z:1 a:s l:0-0 }@"
 		val actual = Examples.example2.getNotation()

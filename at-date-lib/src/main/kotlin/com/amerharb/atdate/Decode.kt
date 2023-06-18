@@ -29,7 +29,9 @@ fun decodeMoment(input: Array<UByte>): Moment {
 		0 -> throw Exception("Invalid input")
 		1 -> {
 			val h = headerList[0]
-			if (h and (0b0100_0000U).toUByte() != (0b0100_0000).toUByte()) throw Exception("Period is not supported yet")
+			if (h and (0b0100_0000U).toUByte() != (0b0100_0000).toUByte()) {
+				throw Exception("Period is not supported yet")
+			}
 			val rangeLevel =
 				if (h and 0b0010_0000U == (0b0010_0000U).toUByte()) RangeLevel.Level2 else RangeLevel.Level1
 			val resolutionLevel = when (h and 0b0001_1100U) {
@@ -57,7 +59,9 @@ fun decodeMoment(input: Array<UByte>): Moment {
 
 		2 -> {
 			val h1 = headerList[0]
-			if (h1 and (0b0100_0000U).toUByte() != (0b0100_0000).toUByte()) throw Exception("Period is not supported yet")
+			if (h1 and (0b0100_0000U).toUByte() != (0b0100_0000).toUByte()) {
+				throw Exception("Period is not supported yet")
+			}
 			val rangeLevel = when (h1 and 0b0011_0000U) {
 				(0b0000_0000).toUByte() -> RangeLevel.Level1
 				(0b0001_0000U).toUByte() -> RangeLevel.Level2
@@ -189,7 +193,9 @@ fun decodePeriod(input: Array<UByte>): Period {
 		0 -> throw Exception("Invalid input")
 		1 -> {
 			val h = headerList[0]
-			if (h and (0b0100_0000U).toUByte() == (0b0100_0000).toUByte()) throw Exception("Moment is not supported here")
+			if (h and (0b0100_0000U).toUByte() == (0b0100_0000).toUByte()) {
+				throw Exception("Moment is not supported here")
+			}
 			val sign = h and (0b0010_0000U).toUByte() != (0b0010_0000U).toUByte()
 			val rangeLevel = when (h and 0b0001_1000U) {
 				(0b0000_0000U).toUByte() -> RangeLevel.Level0
@@ -220,7 +226,9 @@ fun decodePeriod(input: Array<UByte>): Period {
 
 		2 -> {
 			val h1 = headerList[0]
-			if (h1 and (0b0100_0000U).toUByte() == (0b0100_0000).toUByte()) throw Exception("Moment is not supported here")
+			if (h1 and (0b0100_0000U).toUByte() == (0b0100_0000).toUByte()) {
+				throw Exception("Moment is not supported here")
+			}
 			val sign = h1 and (0b0010_0000U).toUByte() != (0b0010_0000U).toUByte()
 
 			val rangeLevel = when (h1 and 0b0001_1100U) {
