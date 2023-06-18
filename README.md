@@ -1,13 +1,47 @@
-# @Date Kotlin Console Application
+# @Date Kotlin Multi Modules Project
 
-This is a Kotlin console application that encodes and decodes Moment and Period notations using the @Date format.
+[![License](https://img.shields.io/badge/License-ISC-blue.svg)](https://opensource.org/licenses/ISC)
+[![Kotlin](https://img.shields.io/badge/Kotlin-1.8.0-blue.svg)](https://kotlinlang.org/)
+[![Gradle](https://img.shields.io/badge/Gradle-7.4.2-blue.svg)](https://gradle.org/)
 
-## Overview
+This project is a multi modules for @Date. 
+The project is a proof of concept for the design part of thesis project ["Date-Time Data Type Problem and Vision"](https://researchportal.hkr.se/ws/portalfiles/portal/63119028/Date_Time_Data_Type_Problem_and_Vision.pdf) published at [Kristianstad University](https://researchportal.hkr.se/sv/studentTheses/problems-and-vision-for-date-time-data-type).
 
-The @Date format is a custom notation for representing date-time (Moment and Period). This application allows you to encode a given Moment or Period into @Date bits representation and decode bits representation of @Date notation into its corresponding Moment or Period notation.
+The project includes the following modules:
+- @Date root module (at-date)
+- @Date Library (at-date-lib)
+- @Date Console Application (at-date-console)
+- @Date Web Api (at-date-api)
 
-## Usage
+![dep.png](doc/dep.png)
 
+## @Date Kotlin Library (at-date-lib)
+### Overview
+This library does encode and decode Moment and Period notations using the @Date format.
+
+It provides Models for AtDate, Moment and Period. It also provides a set of functions to encode and decode Moment and Period notations.
+
+### Usage
+It's used by @Date Kotlin Console Application (at-date-console) and @Date Kotlin Web Api (at-date-api).
+
+### Examples
+```kotlin
+// Encode AtDate notation into Moment class
+val atDate: AtDate = encode("@2019-05-05 { d:1 }@")
+println(atDate) // Moment(rangeLevel=Level1, resolutionLevel=Level0, zoneLevel=Level0, accuracy=Start, leapSecondsFlag=0, date=1009, time=null, zone=null, plusLeapSeconds=null, minusLeapSeconds=null)
+```
+
+### Future Work
+- Publish it to Maven Central.
+- Cover Arithmetic and Logical operations.
+- Encode/decode date-time with level or resolution above 15: The code in Kotlin uses a variable of kind ULong which is only 8 bytes long. A different kind of coding should be used, maybe Array of UByte.
+- Enhance Unit test in implementation.
+
+## @Date Kotlin Console Application (at-date-console)
+### Overview
+This application does encode and decode Moment and Period notations to/from bits representation using c/java/kotlin hexadecimal format.
+
+### Usage
 To use the application, follow these steps:
 
 1. Clone the repository or download the source code.
@@ -29,16 +63,8 @@ To use the application, follow these steps:
    Notation: @2019-05-05 { d:1 t:0 z:0 a:s l:0-0 }@
    >
     ```
-## Unit Tests
 
-The application includes unit tests to verify the correctness of the encoding and decoding operations. These tests ensure that the application produces the expected output for various input scenarios.
-
-To run the unit tests, follow these steps:
-1. Open the project in your preferred Kotlin IDE.
-2. Locate the `TestMain.kt` file in the `com.amerharb.atdate` package.
-3. Run the `TestMain` class or execute the unit tests individually to validate the encoding and decoding functionality.
-
-## Examples
+### Examples
 ```shell
 @Date
 input: 
@@ -67,12 +93,70 @@ Exiting with status 0
 Process finished with exit code 0
 ```
 
+### Future Work
+- Cover Arithmetic and Logical operations when Lib support it.
+- Website to demonstrate the design.
+
+## @Date Kotlin Web Api (at-date-api)
+### Overview
+Provide endpoints that encode and decode Moment and Period notations to/from hexadecimal or base64.
+
+### endpoints
+- `GET /encode/{notation}` to encode Moment or Period notation to hexadecimal.
+it returns:
+``` 
+hex: 0x......
+base64: ......
+```
+example:
+``` HTTP
+GET /encode/@2019-05-05@
+
+hex: 0xc007e2
+base64: wAfi
+```
+
+- `GET /encode/{notation}/hex` to encode Moment or Period notation to hex.
+
+example:
+``` HTTP
+GET /encode/@2019-05-05@/hex
+
+0xc007e2
+```
+
+- `GET /encode/{notation}/base64` to encode Moment or Period notation to base64.
+
+example:
+``` HTTP
+GET /encode/@2019-05-05@/base64
+
+wAfi
+```
+
+- `GET /decode/hex/{hex}` to decode hexadecimal to Moment or Period notation.
+
+example:
+``` HTTP
+GET /decode/hex/0xc007e2
+
+@2019-05-05 { d:1 t:0 z:0 a:s l:0-0 }@
+```
+
+- `GET /decode/base64/{base64}` to decode base64 to Moment or Period notation.
+
+example:
+``` HTTP
+GET /decode/base64/wAfi
+
+@2019-05-05 { d:1 t:0 z:0 a:s l:0-0 }@
+```
+
+### Future Work
+- Support binary.
+
 ## Future Work
-- Cover Arithmetic and Logical operations.
-- Encode/decode date-time with level or resolution above 15: The code in Kotlin uses a variable of kind ULong which is only 8 bytes long. A different kind of coding should be used, maybe Array of UByte.
-- Enhance Unit test in implementation.
 - Website to demonstrate the design.
 
 ## License
-
 This project is licensed under the [ISC License](LICENSE).
