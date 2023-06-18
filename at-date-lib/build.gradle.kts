@@ -1,14 +1,14 @@
 plugins {
-    kotlin("jvm") version "1.8.0"
+	kotlin("jvm") version "1.8.0"
 }
 
 group = "com.amerharb.atdate"
 version = "0.1.0"
 
 repositories {
-    mavenCentral()
+	mavenCentral()
 }
 
 dependencies {
-    testImplementation(kotlin("test"))
+	testImplementation(kotlin("test"))
 }
