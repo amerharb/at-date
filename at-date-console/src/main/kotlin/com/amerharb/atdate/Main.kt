@@ -2,6 +2,7 @@ package com.amerharb.atdate
 
 fun main(args: Array<String>) {
 	println("@Date")
+	println("input: ${args.joinToString(" ")}")
 	if (args.isEmpty()) {
 		println("enter @...@ to encode, 0x... to decode or Q to Quit")
 		while (true) {
