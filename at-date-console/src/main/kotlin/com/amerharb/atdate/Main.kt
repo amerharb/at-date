@@ -2,7 +2,6 @@ package com.amerharb.atdate
 
 fun main(args: Array<String>) {
 	println("@Date")
-	println("input: ${args.joinToString()}")
 	if (args.isEmpty()) {
 		println("enter @...@ to encode, 0x... to decode or Q to Quit")
 		while (true) {
@@ -95,13 +94,14 @@ fun getByteArrayFromHexString(hexString: String): Array<UByte> {
 
 fun printHelp() {
 	println(
-		"""for encoding a date use @Date format
-Usage: atdate [@ISO-Date {properties}@]
-Example: atdate @2019-05-05 {d:1}@
-
-for decoding a date use hexadecimal format
-Usage: atdate [0x....]
-Example: atdate 0xC007E2
-"""
+		"""
+		|for encoding a date use @Date format
+		|Usage: atdate [@ISO-Date {properties}@]
+		|Example: atdate @2019-05-05 {d:1}@
+		|
+		|for decoding a date use hexadecimal format
+		|Usage: atdate [0x....]
+		|Example: atdate 0xC007E2
+		""".trimMargin("|"),
 	)
 }
