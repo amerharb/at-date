@@ -15,12 +15,14 @@ class TestMain {
 		val input = "@2019-05-05{d:1 t:0 a:s l:0-0}@"
 		main(arrayOf(input))
 		val actual = outContent.toString().replace("\r\n", "\n")
-		val expected = """|@Date
-                          |input: $input
-                          |Encoding...
-                          |Hex: 0xc007e2
-                          |Bin: 0b110000000000011111100010
-                          |""".trimMargin("|")
+		val expected = """
+			|@Date
+			|input: $input
+			|Encoding...
+			|Hex: 0xc007e2
+			|Bin: 0b110000000000011111100010
+			|
+		""".trimMargin("|")
 		assertEquals(expected, actual)
 		System.setOut(originalOut)
 	}
@@ -33,12 +35,14 @@ class TestMain {
 		val input = "@2019-05-05T19:53:00+02:00 {d:1 t:5 a:s l:0-0}@"
 		main(arrayOf(input))
 		val actual = outContent.toString().replace("\r\n", "\n")
-		val expected = """|@Date
-                          |input: $input
-                          |Encoding...
-                          |Hex: 0xd607e3179c10
-                          |Bin: 0b110101100000011111100011000101111001110000010000
-                          |""".trimMargin("|")
+		val expected = """
+			|@Date
+			|input: $input
+			|Encoding...
+			|Hex: 0xd607e3179c10
+			|Bin: 0b110101100000011111100011000101111001110000010000
+			|
+		""".trimMargin("|")
 		assertEquals(expected, actual)
 		System.setOut(originalOut)
 	}
@@ -51,12 +55,14 @@ class TestMain {
 		val input = "@2019-05-05T19:53:00+02:00 {d:1 t:5 a:s l:1-1}@"
 		main(arrayOf(input))
 		val actual = outContent.toString().replace("\r\n", "\n")
-		val expected = """|@Date
-                          |input: $input
-                          |Encoding...
-                          |Hex: 0x459407e3179c100202
-                          |Bin: 0b010001011001010000000111111000110001011110011100000100000000001000000010
-                          |""".trimMargin("|")
+		val expected = """
+			|@Date
+			|input: $input
+			|Encoding...
+			|Hex: 0x459407e3179c100202
+			|Bin: 0b010001011001010000000111111000110001011110011100000100000000001000000010
+			|
+		""".trimMargin("|")
 		assertEquals(expected, actual)
 		System.setOut(originalOut)
 	}
@@ -70,11 +76,13 @@ class TestMain {
 		val input = "0xC007E2"
 		main(arrayOf(input))
 		val actual = outContent.toString().replace("\r\n", "\n")
-		val expected = """|@Date
-                          |input: $input
-                          |Decoding...
-                          |Notation: @2019-05-05 { d:1 t:0 z:0 a:s l:0-0 }@
-                          |""".trimMargin("|")
+		val expected = """
+			|@Date
+			|input: $input
+			|Decoding...
+			|Notation: @2019-05-05 { d:1 t:0 z:0 a:s l:0-0 }@
+
+		""".trimMargin("|")
 		assertEquals(expected, actual)
 		System.setOut(originalOut)
 	}
@@ -87,11 +95,13 @@ class TestMain {
 		val input = "0xD607E3179C10"
 		main(arrayOf(input))
 		val actual = outContent.toString().replace("\r\n", "\n")
-		val expected = """|@Date
-                          |input: $input
-                          |Decoding...
-                          |Notation: @2019-05-05T19:53:00+02:00 { d:1 t:5 z:1 a:s l:0-0 }@
-                          |""".trimMargin("|")
+		val expected = """
+			|@Date
+			|input: $input
+			|Decoding...
+			|Notation: @2019-05-05T19:53:00+02:00 { d:1 t:5 z:1 a:s l:0-0 }@
+			|
+		""".trimMargin("|")
 		assertEquals(expected, actual)
 		System.setOut(originalOut)
 	}
@@ -104,11 +114,13 @@ class TestMain {
 		val input = "0x459407e3179c100202"
 		main(arrayOf(input))
 		val actual = outContent.toString().replace("\r\n", "\n")
-		val expected = """|@Date
-                          |input: $input
-                          |Decoding...
-                          |Notation: @2019-05-05T19:53:00+02:00 { d:1 t:5 z:1 a:s l:1-1 }@
-                          |""".trimMargin("|")
+		val expected = """
+			|@Date
+			|input: $input
+			|Decoding...
+			|Notation: @2019-05-05T19:53:00+02:00 { d:1 t:5 z:1 a:s l:1-1 }@
+			|
+		""".trimMargin("|")
 		assertEquals(expected, actual)
 		System.setOut(originalOut)
 	}
@@ -122,12 +134,14 @@ class TestMain {
 		val input = "@P1D@"
 		main(arrayOf(input))
 		val actual = outContent.toString().replace("\r\n", "\n")
-		val expected = """|@Date
-                          |input: $input
-                          |Encoding...
-                          |Hex: 0x880002
-                          |Bin: 0b100010000000000000000010
-                          |""".trimMargin("|")
+		val expected = """
+			|@Date
+			|input: $input
+			|Encoding...
+			|Hex: 0x880002
+			|Bin: 0b100010000000000000000010
+			|
+		""".trimMargin("|")
 		assertEquals(expected, actual)
 		System.setOut(originalOut)
 	}
@@ -140,12 +154,14 @@ class TestMain {
 		val input = "@P15D@"
 		main(arrayOf(input))
 		val actual = outContent.toString().replace("\r\n", "\n")
-		val expected = """|@Date
-                          |input: $input
-                          |Encoding...
-                          |Hex: 0x88001e
-                          |Bin: 0b100010000000000000011110
-                          |""".trimMargin("|")
+		val expected = """
+			|@Date
+			|input: $input
+			|Encoding...
+			|Hex: 0x88001e
+			|Bin: 0b100010000000000000011110
+			|
+		""".trimMargin("|")
 		assertEquals(expected, actual)
 		System.setOut(originalOut)
 	}
@@ -158,12 +174,14 @@ class TestMain {
 		val input = "@P+tp@"
 		main(arrayOf(input))
 		val actual = outContent.toString().replace("\r\n", "\n")
-		val expected = """|@Date
-                          |input: $input
-                          |Encoding...
-                          |Hex: 0x80
-                          |Bin: 0b10000000
-                          |""".trimMargin("|")
+		val expected = """
+			|@Date
+			|input: $input
+			|Encoding...
+			|Hex: 0x80
+			|Bin: 0b10000000
+			|
+		""".trimMargin("|")
 		assertEquals(expected, actual)
 		System.setOut(originalOut)
 	}
@@ -176,12 +194,14 @@ class TestMain {
 		val input = "@P-tp@"
 		main(arrayOf(input))
 		val actual = outContent.toString().replace("\r\n", "\n")
-		val expected = """|@Date
-                          |input: $input
-                          |Encoding...
-                          |Hex: 0xa0
-                          |Bin: 0b10100000
-                          |""".trimMargin("|")
+		val expected = """
+			|@Date
+			|input: $input
+			|Encoding...
+			|Hex: 0xa0
+			|Bin: 0b10100000
+			|
+		""".trimMargin("|")
 		assertEquals(expected, actual)
 		System.setOut(originalOut)
 	}
@@ -195,11 +215,13 @@ class TestMain {
 		val input = "0x880002"
 		main(arrayOf(input))
 		val actual = outContent.toString().replace("\r\n", "\n")
-		val expected = """|@Date
-                          |input: $input
-                          |Decoding...
-                          |Notation: @P+1D { d:1 t:0 l:0-0 }@
-                          |""".trimMargin("|")
+		val expected = """
+			|@Date
+			|input: $input
+			|Decoding...
+			|Notation: @P+1D { d:1 t:0 l:0-0 }@
+			|
+		""".trimMargin("|")
 		assertEquals(expected, actual)
 		System.setOut(originalOut)
 	}
@@ -212,11 +234,13 @@ class TestMain {
 		val input = "0x88001e"
 		main(arrayOf(input))
 		val actual = outContent.toString().replace("\r\n", "\n")
-		val expected = """|@Date
-                          |input: $input
-                          |Decoding...
-                          |Notation: @P+15D { d:1 t:0 l:0-0 }@
-                          |""".trimMargin("|")
+		val expected = """
+			|@Date
+			|input: $input
+			|Decoding...
+			|Notation: @P+15D { d:1 t:0 l:0-0 }@
+			|
+		""".trimMargin("|")
 		assertEquals(expected, actual)
 		System.setOut(originalOut)
 	}
@@ -229,11 +253,13 @@ class TestMain {
 		val input = "0x80"
 		main(arrayOf(input))
 		val actual = outContent.toString().replace("\r\n", "\n")
-		val expected = """|@Date
-                          |input: $input
-                          |Decoding...
-                          |Notation: @P+tp@
-                          |""".trimMargin("|")
+		val expected = """
+			|@Date
+			|input: $input
+			|Decoding...
+			|Notation: @P+tp@
+			|
+		""".trimMargin("|")
 		assertEquals(expected, actual)
 		System.setOut(originalOut)
 	}
@@ -246,11 +272,13 @@ class TestMain {
 		val input = "0xa0"
 		main(arrayOf(input))
 		val actual = outContent.toString().replace("\r\n", "\n")
-		val expected = """|@Date
-                          |input: $input
-                          |Decoding...
-                          |Notation: @P-tp@
-                          |""".trimMargin("|")
+		val expected = """
+			|@Date
+			|input: $input
+			|Decoding...
+			|Notation: @P-tp@
+			|
+		""".trimMargin("|")
 		assertEquals(expected, actual)
 		System.setOut(originalOut)
 	}
