@@ -4,7 +4,7 @@
 [![Kotlin](https://img.shields.io/badge/Kotlin-1.8.0-blue.svg)](https://kotlinlang.org/)
 [![Gradle](https://img.shields.io/badge/Gradle-7.4.2-blue.svg)](https://gradle.org/)
 
-This project is a multi modules for @Date. 
+This project is a multi modules for @Date.
 The project is a proof of concept for the design part of thesis project ["Date-Time Data Type Problem and Vision"](https://researchportal.hkr.se/ws/portalfiles/portal/63119028/Date_Time_Data_Type_Problem_and_Vision.pdf) published at [Kristianstad University](https://researchportal.hkr.se/sv/studentTheses/problems-and-vision-for-date-time-data-type).
 
 The project includes the following modules:
@@ -56,8 +56,8 @@ To use the application, follow these steps:
    Bin: 0b110000000000011111100010
    >
     ```
-    
-    - if you start with `0x` then the application will decode payload into @Date notation.  
+
+    - if you start with `0x` then the application will decode payload into @Date notation.
     ```shell
    > 0xc007e2
    Notation: @2019-05-05 { d:1 t:0 z:0 a:s l:0-0 }@
@@ -67,7 +67,7 @@ To use the application, follow these steps:
 ### Examples
 ```shell
 @Date
-input: 
+input:
 enter @...@ to encode, 0x... to decode or Q to Quit
 >@2019-05-05@
 Hex: 0xc007e2
@@ -95,7 +95,6 @@ Process finished with exit code 0
 
 ### Future Work
 - Cover Arithmetic and Logical operations when Lib support it.
-- Website to demonstrate the design.
 
 ## @Date Kotlin Web Api (at-date-api)
 ### Overview
@@ -104,7 +103,7 @@ Provide endpoints that encode and decode Moment and Period notations to/from hex
 ### endpoints
 - `GET /encode/{notation}` to encode Moment or Period notation to hexadecimal.
 it returns:
-``` 
+```
 hex: 0x......
 base64: ......
 ```
@@ -156,7 +155,7 @@ GET /decode/base64/wAfi
 - Support binary.
 
 ## Future Work
-- Website to demonstrate the design.
+- Add at-date-web module for a web page that demonstrate the design.
 
 ## License
 This project is licensed under the [ISC License](LICENSE).
