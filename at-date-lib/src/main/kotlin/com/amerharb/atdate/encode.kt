@@ -63,8 +63,8 @@ fun encodeMoment(input: String): Moment {
 		}
 
 		RangeLevel.Level2 -> jdn.toULong()
-		RangeLevel.Level3 -> throw UnsupportedOperationException("range level 3 is not supported yet") // TODO: support range level 3
-		RangeLevel.Level4 -> throw UnsupportedOperationException("range level 4 is not supported yet") // TODO: support range level 4
+		RangeLevel.Level3 -> throw UnsupportedOperationException("range level 3 is not supported yet") // TODO:
+		RangeLevel.Level4 -> throw UnsupportedOperationException("range level 4 is not supported yet") // TODO:
 	}
 
 	// read time iso format after T and before Z, + or -
