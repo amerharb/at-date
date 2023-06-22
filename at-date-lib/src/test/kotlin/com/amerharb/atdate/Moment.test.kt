@@ -4,7 +4,7 @@ import kotlin.test.Test
 import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
 
-class TestMoment {
+class MomentTest {
 	@Test
 	@OptIn(ExperimentalUnsignedTypes::class)
 	fun testGetPayloadExample1() {

@@ -4,7 +4,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 
 // test decode Moment function
-class TestDecodeMoment {
+class DecodeMomentTest {
 	@OptIn(ExperimentalUnsignedTypes::class)
 	@Test
 	fun example1() {
@@ -27,7 +27,7 @@ class TestDecodeMoment {
 }
 
 // test decode Period function
-class TestDecodePeriod {
+class DecodePeriodTest {
 	@OptIn(ExperimentalUnsignedTypes::class)
 	@Test
 	fun example4() {
@@ -49,7 +49,7 @@ class TestDecodePeriod {
 	}
 }
 
-class TestGetDateFromJdn {
+class GetDateFromJdnTest {
 	@Test
 	fun test20190505() {
 		val actual = getDateFromJdn(2458609L)

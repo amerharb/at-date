@@ -4,7 +4,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 
 // test encodeMoment function
-class TestEncodeMoment {
+class EncodeMomentTest {
 	@Test
 	fun example1() {
 		val input = "@2019-05-05 {d:1}@"
@@ -77,7 +77,7 @@ class TestEncodeMoment {
 }
 
 // test encodePeriod function
-class TestEncodePeriod {
+class EncodePeriodTest {
 	@Test
 	fun example4() {
 		val input = "@P1D@"
@@ -133,7 +133,7 @@ class TestEncodePeriod {
 /**
  * test cases tested from https://aa.usno.navy.mil/data/JulianDate
  */
-class TestGetJdn {
+class GetJdnTest {
 	@Test
 	fun test20190505() {
 		val input = "2019-05-05"

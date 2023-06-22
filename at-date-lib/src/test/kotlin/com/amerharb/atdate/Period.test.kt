@@ -7,7 +7,7 @@ import kotlin.test.Test
 import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
 
-class TestPeriod {
+class PeriodTest {
 	@Test
 	@OptIn(ExperimentalUnsignedTypes::class)
 	fun testGetPayloadExample4() {
