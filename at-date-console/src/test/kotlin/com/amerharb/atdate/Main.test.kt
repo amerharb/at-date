@@ -5,7 +5,7 @@ import java.io.PrintStream
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class TestMain {
+class MainTest {
 	// Encoding Moment Examples
 	@Test
 	fun testEncodeExample1() {
