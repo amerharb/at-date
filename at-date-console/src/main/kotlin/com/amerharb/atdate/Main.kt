@@ -103,6 +103,6 @@ fun printHelp() {
 		|for decoding a date use hexadecimal format
 		|Usage: atdate [0x....]
 		|Example: atdate 0xC007E2
-		""".trimMargin("|"),
+		""".trimMargin("|")
 	)
 }
