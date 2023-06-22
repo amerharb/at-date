@@ -1,20 +1,20 @@
 plugins {
-    kotlin("jvm") version "1.8.0"
-    application
+	kotlin("jvm") version "1.8.0"
+	application
 }
 
 group = "com.amerharb.atdate"
 version = "0.1.0"
 
 repositories {
-    mavenCentral()
+	mavenCentral()
 }
 
 dependencies {
-    implementation(project(":at-date-lib"))
-    testImplementation(kotlin("test"))
+	implementation(project(":at-date-lib"))
+	testImplementation(kotlin("test"))
 }
 
 application {
-    mainClass.set("MainKt")
+	mainClass.set("MainKt")
 }

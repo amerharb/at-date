@@ -33,3 +33,7 @@ jobs:
 
       - name: Run tests
         run: ./gradlew test
+
+#     TODO:  uncomment this when renaming files is done
+#      - name: Run ktlint check
+#        run: ./gradlew ktlintCheck
