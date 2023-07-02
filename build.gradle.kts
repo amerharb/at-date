@@ -11,11 +11,6 @@ repositories {
 }
 
 ktlint {
-	verbose.set(true)
-	outputToConsole.set(true)
-	coloredOutput.set(true)
-}
-ktlint {
 	version.set("0.49.1")
 	verbose.set(true)
 	outputToConsole.set(true)
