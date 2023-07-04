@@ -4,11 +4,7 @@ plugins {
 }
 
 group = "com.amerharb.atdate"
-version = "0.1.0"
-
-repositories {
-	mavenCentral()
-}
+version = "0.1.1"
 
 dependencies {
 	implementation(project(":at-date-lib"))

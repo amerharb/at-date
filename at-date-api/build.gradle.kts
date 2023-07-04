@@ -3,11 +3,7 @@ plugins {
 }
 
 group = "com.amerharb.atdate"
-version = "0.1.0"
-
-repositories {
-	mavenCentral()
-}
+version = "0.1.1"
 
 val ktor_version = "2.3.1"
 dependencies {
