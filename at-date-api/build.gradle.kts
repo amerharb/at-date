@@ -2,8 +2,8 @@ plugins {
 	kotlin("jvm") version "1.8.0"
 }
 
-val ktor_version:String by project
-val logback_version:String by project
+val ktor_version: String by project
+val logback_version: String by project
 
 group = "com.amerharb.atdate"
 version = "0.1.1"
