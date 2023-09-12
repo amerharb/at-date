@@ -1,10 +1,14 @@
 package com.amerharb.atdate
 
+import java.awt.Toolkit
+import java.awt.datatransfer.StringSelection
+
+var lastResult: String = ""
 fun main(args: Array<String>) {
 	println("@Date")
 	println("input: ${args.joinToString(" ")}")
 	if (args.isEmpty()) {
-		println("enter @...@ to encode, 0x... to decode or Q to Quit")
+		println("enter @...@ to encode, 0x... to decode, C to copy last result or Q to quit")
 		while (true) {
 			mainMenu()
 		}
@@ -44,6 +48,7 @@ fun mainMenu() {
 	when (command[0].lowercase()) {
 		"@" -> encodeCommand(command)
 		"0" -> decodeCommand(command)
+		"c" -> copyLastResultToClipboard()
 		"q" -> exitProcess()
 		else -> {
 			println("Invalid input")
@@ -53,7 +58,9 @@ fun mainMenu() {
 
 fun encodeCommand(input: String) {
 	try {
-		printEncodingResult(encode(input))
+		val result = encode(input)
+		lastResult = "0x${result.getPayload().joinToString("") { it.toString(16).padStart(2, '0') }}"
+		printEncodingResult(result)
 	} catch (e: Exception) {
 		println("Error: ${e.message}")
 	}
@@ -62,10 +69,23 @@ fun encodeCommand(input: String) {
 fun decodeCommand(input: String) {
 	try {
 		val arrayOfUBytes = getByteArrayFromHexString(input)
-		printDecodingResult(decode(arrayOfUBytes))
+		val result = decode(arrayOfUBytes)
+		lastResult = result.getNotation()
+		printDecodingResult(result)
 	} catch (e: Exception) {
 		println("Error: ${e.message}")
 	}
+}
+
+/** copy previous result to clipboard */
+fun copyLastResultToClipboard() {
+	if (lastResult.isBlank()) {
+		println("No result to copy")
+		return
+	}
+	val clipboard = Toolkit.getDefaultToolkit().systemClipboard
+	clipboard.setContents(StringSelection(lastResult), null)
+	println("$lastResult\nhas been copied to clipboard!")
 }
 
 fun exitProcess(status: Int = 0) {
