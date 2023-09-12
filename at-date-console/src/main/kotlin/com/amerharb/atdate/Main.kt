@@ -59,7 +59,7 @@ fun mainMenu() {
 fun encodeCommand(input: String) {
 	try {
 		val result = encode(input)
-		lastResult = "0x${result.getPayload().joinToString("") { it.toString(16).padStart(2, '0') }}"
+		lastResult = getHex(result)
 		printEncodingResult(result)
 	} catch (e: Exception) {
 		println("Error: ${e.message}")
@@ -94,9 +94,13 @@ fun exitProcess(status: Int = 0) {
 }
 
 fun printEncodingResult(atDate: AtDate) {
-	println("Hex: 0x${atDate.getPayload().joinToString("") { it.toString(16).padStart(2, '0') }}")
-	println("Bin: 0b${atDate.getPayload().joinToString("") { it.toString(2).padStart(8, '0') }}")
+	println("Hex: ${getHex(atDate)}")
+	println("Bin: ${getBin(atDate)}")
 }
+
+fun getHex(atDate: AtDate) = "0x${atDate.getPayload().joinToString("") { it.toString(16).padStart(2, '0') }}"
+
+fun getBin(atDate: AtDate) = "0b${atDate.getPayload().joinToString("") { it.toString(2).padStart(8, '0') }}"
 
 fun printDecodingResult(atDate: AtDate) {
 	println("Notation: ${atDate.getNotation()}")
