@@ -75,10 +75,8 @@ fun Application.module() {
 	}
 }
 
-private fun isValidHex(hex: String): Boolean {
-	val regex = Regex("^0x[0-9a-fA-F]{4,}$")
-	return regex.matches(hex) && hex.length % 2 == 0
-}
+private fun isValidHex(hex: String): Boolean =
+	hex.length % 2 == 0 && Regex("^0x[0-9a-fA-F]{4,}$").matches(hex)
 
 private fun getUByteArrayFromHex(hex: String): Array<UByte> =
 	hex
