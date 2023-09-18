@@ -75,40 +75,33 @@ fun Application.module() {
 	}
 }
 
-private fun isValidHex(hex: String): Boolean {
-	val regex = Regex("^0x[0-9a-fA-F]{4,}$")
-	return regex.matches(hex) && hex.length % 2 == 0
-}
+private fun isValidHex(hex: String): Boolean =
+	hex.length % 2 == 0 && Regex("^0x[0-9a-fA-F]{4,}$").matches(hex)
 
-private fun getUByteArrayFromHex(hex: String): Array<UByte> {
-	val byteList = hex
+private fun getUByteArrayFromHex(hex: String): Array<UByte> =
+	hex
 		.drop(2) // remove "0x" from input
 		.chunked(2) // split into 2 chars where each chunk is a byte
 		.map { it.toInt(16).toUByte() } // convert each chunk to UByte
-	return byteList.toTypedArray()
-}
+		.toTypedArray()
 
-private fun isValidBase64(base64: String): Boolean {
-	val regex = Regex("^[0-9a-zA-Z+/]+={0,3}$")
-	return regex.matches(base64) && base64.length % 4 == 0
-}
+private fun isValidBase64(base64: String): Boolean =
+	(base64.length % 4 == 0) && Regex("^[0-9a-zA-Z+/]+={0,3}$").matches(base64)
 
-private fun getUByteArrayFromBase64(base64: String): Array<UByte> {
-	val byteList = Base64.getDecoder().decode(base64)
+private fun getUByteArrayFromBase64(base64: String): Array<UByte> =
+	Base64.getDecoder().decode(base64)
 		.map { it.toUByte() }
-	return byteList.toTypedArray()
-}
+		.toTypedArray()
 
 private fun AtDate.getHex(): String {
 	val hexList = this.getPayload().map { it.toString(16).padStart(2, '0') }
 	return "0x${hexList.joinToString("")}"
 }
 
-private fun AtDate.getBase64(): String {
-	val byteList: List<Byte> = this.getPayload().map { it.toByte() }
-	val byteArr: ByteArray = byteList.toByteArray()
-	return Base64.getEncoder().encodeToString(byteArr)
-}
+private fun AtDate.getBase64(): String =
+	Base64
+		.getEncoder()
+		.encodeToString(this.getPayload().map { it.toByte() }.toByteArray())
 
 /**
  * check if param is existed then execute action,
