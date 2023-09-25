@@ -295,7 +295,7 @@ class MainTest {
 		System.setIn(systemInMock)
 		main(emptyArray())
 		val expected = "@P-tp@"
-		val actual = getCliboard()
+		val actual = getClipboard()
 		assertEquals(expected, actual)
 		System.setIn(originalIn)
 	}
@@ -315,7 +315,7 @@ class InputStreamMock(input: String) : InputStream() {
 	}
 }
 
-fun getCliboard(): String {
+fun getClipboard(): String {
 	val clipboard = Toolkit.getDefaultToolkit().systemClipboard
 	return clipboard.getData(DataFlavor.stringFlavor) as String
 }
