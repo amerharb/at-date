@@ -1,6 +1,9 @@
 package com.amerharb.atdate
 
+import java.awt.Toolkit
+import java.awt.datatransfer.DataFlavor
 import java.io.ByteArrayOutputStream
+import java.io.InputStream
 import java.io.PrintStream
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -282,4 +285,37 @@ class MainTest {
 		assertEquals(expected, actual)
 		System.setOut(originalOut)
 	}
+
+	@Test
+	fun testCopyResult() {
+		val outContent = ByteArrayOutputStream()
+		val originalIn = System.`in`
+		System.setOut(PrintStream(outContent))
+		val systemInMock = InputStreamMock("0xa0\nc\nq")
+		System.setIn(systemInMock)
+		main(emptyArray())
+		val expected = "@P-tp@"
+		val actual = getCliboard()
+		assertEquals(expected, actual)
+		System.setIn(originalIn)
+	}
+}
+
+class InputStreamMock(input: String) : InputStream() {
+	private val data: MutableList<Char> = mutableListOf()
+
+	init {
+		this.data.addAll(input.toList())
+	}
+	override fun read(): Int {
+		if (data.isEmpty()) {
+			return -1
+		}
+		return data.removeAt(0).code
+	}
+}
+
+fun getCliboard(): String {
+	val clipboard = Toolkit.getDefaultToolkit().systemClipboard
+	return clipboard.getData(DataFlavor.stringFlavor) as String
 }

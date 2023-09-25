@@ -10,14 +10,16 @@ fun main(args: Array<String>) {
 	if (args.isEmpty()) {
 		println("enter @...@ to encode, 0x... to decode, C to copy last result or Q to quit")
 		while (true) {
-			mainMenu()
+			if (!mainMenu()) {
+				println("Exiting 👋...")
+				break
+			}
 		}
 	} else {
 		val arg1 = args[0]
 		when {
 			arg1 == "-h" || arg1 == "--help" -> {
 				printHelp()
-				exitProcess(0)
 			}
 
 			arg1.startsWith("@") -> {
@@ -38,22 +40,23 @@ fun main(args: Array<String>) {
 	}
 }
 
-fun mainMenu() {
+fun mainMenu(): Boolean {
 	print(">")
 	val command = readlnOrNull()
 	if (command.isNullOrBlank()) {
 		println("Invalid input")
-		return
+		return true
 	}
 	when (command[0].lowercase()) {
 		"@" -> encodeCommand(command)
 		"0" -> decodeCommand(command)
 		"c" -> copyLastResultToClipboard()
-		"q" -> exitProcess()
+		"q" -> return false
 		else -> {
 			println("Invalid input")
 		}
 	}
+	return true
 }
 
 fun encodeCommand(input: String) {
@@ -86,11 +89,6 @@ fun copyLastResultToClipboard() {
 	val clipboard = Toolkit.getDefaultToolkit().systemClipboard
 	clipboard.setContents(StringSelection(lastResult), null)
 	println("$lastResult\nhas been copied to clipboard!")
-}
-
-fun exitProcess(status: Int = 0) {
-	println("Exiting with status $status")
-	kotlin.system.exitProcess(status)
 }
 
 fun printEncodingResult(atDate: AtDate) {
