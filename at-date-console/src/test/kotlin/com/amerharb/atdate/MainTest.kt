@@ -321,6 +321,11 @@ class InputStreamMock(input: String) : InputStream() {
 // }
 //
 fun clearClipboard() {
-	val clipboard = Toolkit.getDefaultToolkit().systemClipboard
-	clipboard.setContents(StringSelection(""), null)
+	try {
+		val clipboard = Toolkit.getDefaultToolkit().systemClipboard
+		clipboard.setContents(StringSelection(""), null)
+	} catch (e: Exception) {
+		println("Error: ${e.message}")
+		System.err.println(e.message)
+	}
 }
