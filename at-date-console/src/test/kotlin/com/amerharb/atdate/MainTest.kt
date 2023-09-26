@@ -1,8 +1,8 @@
 package com.amerharb.atdate
 
-//import java.awt.Toolkit
-//import java.awt.datatransfer.DataFlavor
-//import java.awt.datatransfer.StringSelection
+// import java.awt.datatransfer.DataFlavor
+// import java.awt.Toolkit
+// import java.awt.datatransfer.StringSelection
 import java.io.ByteArrayOutputStream
 import java.io.InputStream
 import java.io.PrintStream
@@ -291,13 +291,13 @@ class MainTest {
 
 	@Test
 	fun testCopyResult() {
-//		clearClipboard()
-//		val systemInMock = InputStreamMock("0xa0\nc\nq")
-//		System.setIn(systemInMock)
-//		main(emptyArray())
-//		val expected = "@P-tp@"
-//		val actual = getClipboard()
-//		assertEquals(expected, actual)
+// 		clearClipboard()
+// 		val systemInMock = InputStreamMock("0xa0\nc\nq")
+// 		System.setIn(systemInMock)
+// 		main(emptyArray())
+// 		val expected = "@P-tp@"
+// 		val actual = getClipboard()
+// 		assertEquals(expected, actual)
 		assert(true)
 	}
 }
@@ -313,6 +313,7 @@ class InputStreamMock(input: String) : InputStream() {
 		return this.queue.poll()?.code ?: -1
 	}
 }
+
 //
 // fun getClipboard(): String {
 // 	val clipboard = Toolkit.getDefaultToolkit().systemClipboard
