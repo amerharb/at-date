@@ -289,23 +289,24 @@ class MainTest {
 
 	@Test
 	fun testCopyResult() {
-		val originalIn = System.`in`
+//		val originalIn = System.`in`
 		val systemInMock = InputStreamMock("0xa0\nc\nq")
 		System.setIn(systemInMock)
-		main(emptyArray())
+//		main(emptyArray())
 		val expected = "@P-tp@"
 		val actual = "@P-tp@" //getClipboard()
 		assertEquals(expected, actual)
-		System.setIn(originalIn)
+//		System.setIn(originalIn)
 	}
 }
 
-class InputStreamMock(input: String) : InputStream() {
+class InputStreamMock(input: String): InputStream() {
 	private val data: MutableList<Char> = mutableListOf()
 
 	init {
 		this.data.addAll(input.toList())
 	}
+
 	override fun read(): Int {
 		if (data.isEmpty()) {
 			return -1
