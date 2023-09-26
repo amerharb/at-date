@@ -5,6 +5,8 @@ import java.awt.datatransfer.DataFlavor
 import java.io.ByteArrayOutputStream
 import java.io.InputStream
 import java.io.PrintStream
+import java.util.LinkedList
+import java.util.Queue
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -298,17 +300,14 @@ class MainTest {
 }
 
 class InputStreamMock(input: String) : InputStream() {
-	private val data: MutableList<Char> = mutableListOf()
+	private val queue: Queue<Char> = LinkedList()
 
 	init {
-		this.data.addAll(input.toList())
+		this.queue.addAll(input.toList())
 	}
 
 	override fun read(): Int {
-		if (data.isEmpty()) {
-			return -1
-		}
-		return data.removeAt(0).code
+		return this.queue.poll()?.code ?: -1
 	}
 }
 
