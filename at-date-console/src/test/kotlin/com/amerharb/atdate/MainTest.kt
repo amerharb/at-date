@@ -289,9 +289,7 @@ class MainTest {
 
 	@Test
 	fun testCopyResult() {
-		val outContent = ByteArrayOutputStream()
 		val originalIn = System.`in`
-		System.setOut(PrintStream(outContent))
 		val systemInMock = InputStreamMock("0xa0\nc\nq")
 		System.setIn(systemInMock)
 		main(emptyArray())
