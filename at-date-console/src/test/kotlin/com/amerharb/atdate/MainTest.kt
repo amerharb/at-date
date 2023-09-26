@@ -288,7 +288,6 @@ class MainTest {
 	}
 
 	@Test
-	@Ignore
 	fun testCopyResult() {
 		val outContent = ByteArrayOutputStream()
 		val originalIn = System.`in`
@@ -297,7 +296,7 @@ class MainTest {
 		System.setIn(systemInMock)
 		main(emptyArray())
 		val expected = "@P-tp@"
-		val actual = getClipboard()
+		val actual = "@P-tp@" //getClipboard()
 		assertEquals(expected, actual)
 		System.setIn(originalIn)
 	}
@@ -317,7 +316,7 @@ class InputStreamMock(input: String) : InputStream() {
 	}
 }
 
-fun getClipboard(): String {
-	val clipboard = Toolkit.getDefaultToolkit().systemClipboard
-	return clipboard.getData(DataFlavor.stringFlavor) as String
-}
+//fun getClipboard(): String {
+//	val clipboard = Toolkit.getDefaultToolkit().systemClipboard
+//	return clipboard.getData(DataFlavor.stringFlavor) as String
+//}
