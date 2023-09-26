@@ -9,12 +9,8 @@ fun main(args: Array<String>) {
 	println("input: ${args.joinToString(" ")}")
 	if (args.isEmpty()) {
 		println("enter @...@ to encode, 0x... to decode, C to copy last result or Q to quit")
-		while (true) {
-			if (!mainMenu()) {
-				println("Exiting 👋...")
-				break
-			}
-		}
+		while (mainMenu()) {}
+		println("Quiting 👋...")
 	} else {
 		val arg1 = args[0]
 		when {
