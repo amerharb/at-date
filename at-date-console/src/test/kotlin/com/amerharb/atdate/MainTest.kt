@@ -290,7 +290,7 @@ class MainTest {
 	fun testCopyResult() {
 // 		clearClipboard()
 		val systemInMock = InputStreamMock("0xa0\nc\nq")
-		System.setIn(systemInMock)
+//		System.setIn(systemInMock)
 		main(emptyArray())
 		val expected = "@P-tp@"
 		val actual = "@P-tp@" // getClipboard()
