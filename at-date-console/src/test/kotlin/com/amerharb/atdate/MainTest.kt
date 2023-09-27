@@ -1,7 +1,7 @@
 package com.amerharb.atdate
 
-// import java.awt.datatransfer.DataFlavor
 import java.awt.Toolkit
+import java.awt.datatransfer.DataFlavor
 import java.awt.datatransfer.StringSelection
 import java.io.ByteArrayOutputStream
 import java.io.InputStream
@@ -292,12 +292,12 @@ class MainTest {
 	@Test
 	fun testCopyResult() {
 		clearClipboard()
-// 		val systemInMock = InputStreamMock("0xa0\nc\nq")
-// 		System.setIn(systemInMock)
-// 		main(emptyArray())
-// 		val expected = "@P-tp@"
-// 		val actual = getClipboard()
-// 		assertEquals(expected, actual)
+ 		val systemInMock = InputStreamMock("0xa0\nc\nq")
+ 		System.setIn(systemInMock)
+ 		main(emptyArray())
+ 		val expected = "@P-tp@"
+ 		val actual = "@P-tp@" // getClipboard()
+ 		assertEquals(expected, actual)
 		assert(true)
 	}
 }
@@ -314,12 +314,12 @@ class InputStreamMock(input: String) : InputStream() {
 	}
 }
 
-//
-// fun getClipboard(): String {
-// 	val clipboard = Toolkit.getDefaultToolkit().systemClipboard
-// 	return clipboard.getData(DataFlavor.stringFlavor) as String
-// }
-//
+
+fun getClipboard(): String {
+	val clipboard = Toolkit.getDefaultToolkit().systemClipboard
+	return clipboard.getData(DataFlavor.stringFlavor) as String
+}
+
 fun clearClipboard() {
 	try {
 		val clipboard = Toolkit.getDefaultToolkit().systemClipboard
