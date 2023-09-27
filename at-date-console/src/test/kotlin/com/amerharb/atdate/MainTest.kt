@@ -292,12 +292,12 @@ class MainTest {
 	@Test
 	fun testCopyResult() {
 		clearClipboard()
- 		val systemInMock = InputStreamMock("0xa0\nc\nq")
- 		System.setIn(systemInMock)
- 		main(emptyArray())
- 		val expected = "@P-tp@"
- 		val actual = "@P-tp@" // getClipboard()
- 		assertEquals(expected, actual)
+		val systemInMock = InputStreamMock("0xa0\nc\nq")
+		System.setIn(systemInMock)
+		main(emptyArray())
+		val expected = "@P-tp@"
+		val actual = "@P-tp@" // getClipboard()
+		assertEquals(expected, actual)
 		assert(true)
 	}
 }
@@ -313,7 +313,6 @@ class InputStreamMock(input: String) : InputStream() {
 		return this.queue.poll()?.code ?: -1
 	}
 }
-
 
 fun getClipboard(): String {
 	val clipboard = Toolkit.getDefaultToolkit().systemClipboard
