@@ -1,7 +1,14 @@
 package com.amerharb.atdate
 
+import java.awt.Toolkit
+import java.awt.datatransfer.DataFlavor
+import java.awt.datatransfer.StringSelection
 import java.io.ByteArrayOutputStream
+import java.io.InputStream
 import java.io.PrintStream
+import java.util.LinkedList
+import java.util.Queue
+import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -281,5 +288,48 @@ class MainTest {
 		""".trimMargin("|")
 		assertEquals(expected, actual)
 		System.setOut(originalOut)
+	}
+
+	@Test
+	@Ignore // Ignored as this test can not work in GitHub Actions
+	fun testCopyResult() {
+		val originalInputStream = System.`in`
+		try {
+			clearClipboard()
+			System.setIn(InputStreamMock("0xa0\nc\nq"))
+			main(emptyArray())
+			val expected = "@P-tp@"
+			val actual = getClipboard()
+			assertEquals(expected, actual)
+		} finally {
+			System.setIn(originalInputStream)
+		}
+	}
+}
+
+class InputStreamMock(input: String) : InputStream() {
+	private val queue: Queue<Char> = LinkedList()
+
+	init {
+		this.queue.addAll(input.toList())
+	}
+
+	override fun read(): Int {
+		return this.queue.poll()?.code ?: -1
+	}
+}
+
+fun getClipboard(): String {
+	val clipboard = Toolkit.getDefaultToolkit().systemClipboard
+	return clipboard.getData(DataFlavor.stringFlavor) as String
+}
+
+fun clearClipboard() {
+	try {
+		val clipboard = Toolkit.getDefaultToolkit().systemClipboard
+		clipboard.setContents(StringSelection(""), null)
+	} catch (e: Exception) {
+		println("Error: ${e.message}")
+		System.err.println(e.message)
 	}
 }

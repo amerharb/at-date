@@ -4,7 +4,7 @@ plugins {
 }
 
 group = "com.amerharb.atdate"
-version = "0.1.1"
+version = "0.2.0"
 
 dependencies {
 	implementation(project(":at-date-lib"))

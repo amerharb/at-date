@@ -1,19 +1,21 @@
 package com.amerharb.atdate
 
+import java.awt.Toolkit
+import java.awt.datatransfer.StringSelection
+
+var lastResult: String = ""
 fun main(args: Array<String>) {
 	println("@Date")
 	println("input: ${args.joinToString(" ")}")
 	if (args.isEmpty()) {
-		println("enter @...@ to encode, 0x... to decode or Q to Quit")
-		while (true) {
-			mainMenu()
-		}
+		println("enter @...@ to encode, 0x... to decode, C to copy last result or Q to quit")
+		while (mainMenu()) {}
+		println("Quiting 👋...")
 	} else {
 		val arg1 = args[0]
 		when {
 			arg1 == "-h" || arg1 == "--help" -> {
 				printHelp()
-				exitProcess(0)
 			}
 
 			arg1.startsWith("@") -> {
@@ -34,26 +36,30 @@ fun main(args: Array<String>) {
 	}
 }
 
-fun mainMenu() {
+fun mainMenu(): Boolean {
 	print(">")
 	val command = readlnOrNull()
 	if (command.isNullOrBlank()) {
 		println("Invalid input")
-		return
+		return true
 	}
 	when (command[0].lowercase()) {
 		"@" -> encodeCommand(command)
 		"0" -> decodeCommand(command)
-		"q" -> exitProcess()
+		"c" -> copyLastResultToClipboard()
+		"q" -> return false
 		else -> {
 			println("Invalid input")
 		}
 	}
+	return true
 }
 
 fun encodeCommand(input: String) {
 	try {
-		printEncodingResult(encode(input))
+		val result = encode(input)
+		lastResult = getHex(result)
+		printEncodingResult(result)
 	} catch (e: Exception) {
 		println("Error: ${e.message}")
 	}
@@ -62,21 +68,33 @@ fun encodeCommand(input: String) {
 fun decodeCommand(input: String) {
 	try {
 		val arrayOfUBytes = getByteArrayFromHexString(input)
-		printDecodingResult(decode(arrayOfUBytes))
+		val result = decode(arrayOfUBytes)
+		lastResult = result.getNotation()
+		printDecodingResult(result)
 	} catch (e: Exception) {
 		println("Error: ${e.message}")
 	}
 }
 
-fun exitProcess(status: Int = 0) {
-	println("Exiting with status $status")
-	kotlin.system.exitProcess(status)
+/** copy previous result to clipboard */
+fun copyLastResultToClipboard() {
+	if (lastResult.isBlank()) {
+		println("No result to copy")
+		return
+	}
+	val clipboard = Toolkit.getDefaultToolkit().systemClipboard
+	clipboard.setContents(StringSelection(lastResult), null)
+	println("$lastResult\nhas been copied to clipboard!")
 }
 
 fun printEncodingResult(atDate: AtDate) {
-	println("Hex: 0x${atDate.getPayload().joinToString("") { it.toString(16).padStart(2, '0') }}")
-	println("Bin: 0b${atDate.getPayload().joinToString("") { it.toString(2).padStart(8, '0') }}")
+	println("Hex: ${getHex(atDate)}")
+	println("Bin: ${getBin(atDate)}")
 }
+
+fun getHex(atDate: AtDate) = "0x${atDate.getPayload().joinToString("") { it.toString(16).padStart(2, '0') }}"
+
+fun getBin(atDate: AtDate) = "0b${atDate.getPayload().joinToString("") { it.toString(2).padStart(8, '0') }}"
 
 fun printDecodingResult(atDate: AtDate) {
 	println("Notation: ${atDate.getNotation()}")
